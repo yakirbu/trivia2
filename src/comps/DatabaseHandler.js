@@ -12,12 +12,28 @@ var config = {
 };
 firebase.initializeApp(config);
 
-var database = firebase.database;
-var auth = firebase.auth;
+var database = firebase.database();
+var auth = firebase.auth();
 
 class DatabaseHandler extends Component {
 
+    constructor(props) {
+        super(props);
 
+
+        //USAGE EXAMPLE:
+        this.getDataOnce(["Games", "1518613451928"], (snap) => {
+            console.log(snap.val());
+        });
+    }
+
+
+    //Template for a single request (not a listener)
+    getDataOnce(path, callback) {
+        return database.ref('/' + path.join("/")).once('value').then(function (snapshot) {
+            callback(snapshot);
+        });
+    }
 
     render() {
         return (
