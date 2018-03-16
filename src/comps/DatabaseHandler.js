@@ -17,6 +17,7 @@ var auth = firebase.auth();
 
 class DatabaseHandler extends Component {
 
+
     constructor(props) {
         super(props);
 
@@ -31,8 +32,16 @@ class DatabaseHandler extends Component {
     //Template for a single request (not a listener)
     getDataOnce(path, callback) {
         return database.ref('/' + path.join("/")).once('value').then(function (snapshot) {
-            callback(snapshot);
+            if (snapshot.numChildren() > 0)
+                callback(snapshot);
+            else
+                callback(null);
         });
+    }
+
+
+    static getFirebaseAuth() {
+        return auth;
     }
 
     render() {

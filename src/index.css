@@ -1,10 +1,15 @@
+*{
+  color:white;
+  font-family: 'Rubik', sans-serif;
+  margin: 0;
+}
+
 body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
   background: #36399a;
 }
-
 
 html{
     height:100vh;
@@ -22,10 +27,12 @@ html,body{
   overflow: hidden;
 }
 
+/*
 body,span,h1,h2,h3,h4,h5,h6,a,button,div{
   font-family: 'Rubik', sans-serif;
   margin: 0;
 }
+*/
 
 h4,h5,h6{
   font-weight: 300;
@@ -42,4 +49,19 @@ h4,h5,h6{
   width:100px;
   border-radius: 30px;
   color:white;
+}
+
+
+input{
+  border-radius: 3px;
+  height: 30px;
+  border:0;
+}
+
+
+/* GAME LOGO */
+.game_logo{
+    width:30%;
+    max-width: 130px;
+    object-fit: contain;
 }

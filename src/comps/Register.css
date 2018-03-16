@@ -1,0 +1,28 @@
+
+
+.register_container{
+    padding: 30px;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.text_w_input{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.text_w_input h3{
+    padding-top:15px;
+}
+
+.text_w_input input{
+    margin:20px 0;
+}
+
+
+#recaptcha-container{
+    padding:20px;
+}
