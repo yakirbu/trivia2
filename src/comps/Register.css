@@ -1,6 +1,7 @@
 
 
 .register_container{
+    color:white;
     padding: 30px;
 
     display: flex;
@@ -20,9 +21,6 @@
 
 .text_w_input input{
     margin:20px 0;
+    color:black;
 }
 
-
-#recaptcha-container{
-    padding:20px;
-}
