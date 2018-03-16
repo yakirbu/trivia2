@@ -16,22 +16,36 @@ var database = firebase.database();
 var auth = firebase.auth();
 
 class DatabaseHandler extends Component {
-
+    static user;
 
     constructor(props) {
         super(props);
 
 
         //USAGE EXAMPLE:
+        /*
         this.getDataOnce(["Games", "1518613451928"], (snap) => {
             console.log(snap.val());
         });
+        */
     }
 
 
     //Template for a single request (not a listener)
-    getDataOnce(path, callback) {
+    //path: array, callback: function()
+    static getDataOnce(path, callback) {
         return database.ref('/' + path.join("/")).once('value').then(function (snapshot) {
+            if (snapshot.numChildren() > 0)
+                callback(snapshot);
+            else
+                callback(null);
+        });
+    }
+
+    //Template for a single request with equalTo query
+    //path: array, where: array, callback: function()
+    static getDataOnceWhere(path, where, callback) {
+        return database.ref('/' + path.join("/")).orderByChild(where[0]).equalTo(where[1]).once('value').then(function (snapshot) {
             if (snapshot.numChildren() > 0)
                 callback(snapshot);
             else
