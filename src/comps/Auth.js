@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 
 //COMPS
 import MainGame from './MainGame';
+import Register from './Register';
 
 class Auth extends Component {
     constructor(props) {
@@ -15,7 +16,7 @@ class Auth extends Component {
             <div>
 
                 {/* TO:DO - REGISTRATION */}
-                <MainGame />
+                <Register />
             </div>
         )
     }
