@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import * as firebase from "firebase";
 
 // Initialize Firebase  
-var config = {
+const config = {
     apiKey: "AIzaSyAv8yxEEHKdN3WxehmUJY7G6DSWOBYyrO4",
     authDomain: "questions-59ee6.firebaseapp.com",
     databaseURL: "https://questions-59ee6.firebaseio.com",
