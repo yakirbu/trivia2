@@ -1,0 +1,98 @@
+/* VIDEO TEST */
+video{
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%; 
+    min-height: 100%;
+    object-fit: fill;
+}
+
+
+
+
+
+
+
+
+.main_game_container{
+    position: fixed;
+
+
+    width: 100%;
+    height: 100vh;
+    
+    
+}
+
+
+.main_screen_g{
+    /*
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+*/
+}
+
+
+
+
+
+/* TOP BAR */
+.game_top_bar{
+    width: 100%;
+
+    display: fixed;
+    left:0;
+    top:0;
+}
+
+.g_t_b_wrapper{
+    margin: 15px 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.h_b_startButt{
+    margin-left: 15px;
+}
+
+.h_b_startButt button{
+    background:url(../images/mute.png) no-repeat;
+    cursor:pointer;
+    border:none;
+}
+
+.heart_bar{
+    margin-right: 15px;
+
+    display: flex;
+    flex-direction: row;
+
+    color: #36399a;
+    font-weight: 500;
+
+    background: white;
+    height:20px;
+    width: 60px;
+    border-radius: 30px;
+}
+
+.heart_bar .h_icon{
+    flex:1;
+    position: relative;
+    right: -8px;
+    top: -3px;
+}
+
+.heart_bar .h_text{
+    flex:4;
+    padding-right: 4px;
+    text-align: right;
+}
+
+

@@ -1,0 +1,103 @@
+
+
+
+.game_logo{
+    width:30%;
+    max-width: 130px;
+    object-fit: contain;
+}
+
+
+
+.main_screen_container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+/* GAME DESC */
+.game_desc{
+    font-size: 5vw;
+    
+    padding: 30px;
+    padding-top: 25px;
+    text-align: center;
+    color:white;
+}
+.game_desc h4{
+    font-weight: 300;
+}
+
+
+/* PLAYER DATA */
+.game_player_data{  
+    width: 300px;
+    height: 50vh;
+
+    border-radius: 30px;
+    background: white;
+
+}
+
+.p_items_container{
+    display: flex;
+    flex-direction: column;
+    flex:3;
+
+    align-items: center;
+
+    height: 100%;
+
+}
+
+.player_data_item{
+    margin: 5px 0;
+    color:#aeaeae;
+    flex:1;
+
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 95%;
+    border-radius: 30px;
+    background: #eaeaea;
+}
+
+
+/* GAME BOTTOM */
+
+.main_game_bottom{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    width: 100%;
+
+    /*
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    */
+}
+
+.bottom_buttons{
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+}
+
+.bottom_buttons .game_button{
+    margin:0 15px;
+}
+
+
+
+
+@media screen and (min-width: 520px){
+    .game_desc{
+        font-size: 20px;
+    }
+}

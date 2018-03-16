@@ -1,0 +1,45 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background: #36399a;
+}
+
+
+html{
+    height:100vh;
+    box-sizing: border-box;
+}
+
+body {
+  position: relative;
+  margin: 0;
+  padding-bottom: 6rem;
+  min-height: 100%;
+}
+
+html,body{
+  overflow: hidden;
+}
+
+body,span,h1,h2,h3,h4,h5,h6,a,button,div{
+  font-family: 'Rubik', sans-serif;
+  margin: 0;
+}
+
+h4,h5,h6{
+  font-weight: 300;
+}
+
+.game_button{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-weight: 500;
+  background-color:#6c6ed7;
+  height:40px;
+  width:100px;
+  border-radius: 30px;
+  color:white;
+}
