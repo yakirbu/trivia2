@@ -9,7 +9,7 @@
     flex-direction: column;
 }
 
-.text_w_input{
+.text_w_input, .text_w_input div{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -24,3 +24,6 @@
     color:black;
 }
 
+#recaptcha-container{
+    padding:20px;
+}

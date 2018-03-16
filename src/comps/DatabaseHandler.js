@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as firebase from "firebase";
+import axios from 'axios';
 
 // Initialize Firebase  
 const config = {
@@ -20,6 +21,7 @@ class DatabaseHandler extends Component {
 
     constructor(props) {
         super(props);
+
 
 
         //USAGE EXAMPLE:
@@ -56,6 +58,16 @@ class DatabaseHandler extends Component {
 
     static getFirebaseAuth() {
         return auth;
+    }
+
+    static getTime(callback) {
+        axios.get('https://us-central1-questions-59ee6.cloudfunctions.net/app/api/time')
+            .then(function (response) {
+                callback(response.data);
+            })
+            .catch(function (error) {
+                callback(null);
+            });
     }
 
     render() {
