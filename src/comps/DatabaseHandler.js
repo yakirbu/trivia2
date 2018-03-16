@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as firebase from "firebase";
 
-// Initialize Firebase
+// Initialize Firebase  
 var config = {
     apiKey: "AIzaSyAv8yxEEHKdN3WxehmUJY7G6DSWOBYyrO4",
     authDomain: "questions-59ee6.firebaseapp.com",
