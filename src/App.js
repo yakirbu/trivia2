@@ -10,14 +10,16 @@ import {
 
 //COMPS
 import MainGame from './comps/MainGame'
-import Register from './comps/Register'
+import Auth from './comps/Auth'
+import DatabaseHandler from './comps/DatabaseHandler';
 
 class App extends Component {
   render() {
     return (
       <Router>
         <div>
-          <Route exact path="/" component={Register} />
+          <DatabaseHandler />
+          <Route exact path="/" component={Auth} />
         </div>
       </Router>
     );
