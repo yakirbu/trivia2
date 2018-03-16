@@ -64,10 +64,6 @@ class MainGame extends Component {
                 <video id="video" muted autoPlay loop></video>
                 <div className="main_game_container">
 
-
-
-
-
                     {/* TOP-BAR */}
                     <div className="game_top_bar">
                         <div className="g_t_b_wrapper">
