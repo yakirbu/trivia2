@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
+import {database, auth, DatabaseHandler} from './DatabaseHandler';
 import * as firebase from 'firebase';
-
 //CSS
 import './Register.css';
 
 //COMPS
 import MainGame from './MainGame';
-import DatabaseHandler from './DatabaseHandler';
 
 //IMG
 import game_logo from '../images/logo-icon.png'
@@ -31,7 +30,7 @@ class Register extends Component {
 
     componentDidMount() {
 
-        firebase.auth().onAuthStateChanged(function (user) {
+        auth.onAuthStateChanged(function (user) {
             if (user) {
                 var userPhone = "0" + user.phoneNumber.replace("+972", "");
 
@@ -116,7 +115,7 @@ class Register extends Component {
                     //TO:DO - CHECK PHONE NUMBER SYNTAX
                     var appVerifier = window.recaptchaVerifier;
                     console.log(appVerifier);
-                    firebase.auth().signInWithPhoneNumber("+972" + phoneNum, appVerifier)
+                    auth.signInWithPhoneNumber("+972" + phoneNum, appVerifier)
                         .then(function (confirmationResult) {
                             that.setState({
                                 smsSent: true
@@ -181,7 +180,7 @@ class Register extends Component {
 
             var updates = {};
             updates['/Users/' + time] = user;
-            return firebase.database().ref().update(updates).then((s) => {
+            return database.ref().update(updates).then((s) => {
                 that.setState({
                     verified: true,
                 })

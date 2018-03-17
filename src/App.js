@@ -11,7 +11,6 @@ import {
 //COMPS
 import MainGame from './comps/MainGame'
 import Auth from './comps/Auth'
-import DatabaseHandler from './comps/DatabaseHandler';
 
 
 class App extends Component {
@@ -19,7 +18,6 @@ class App extends Component {
     return (
       <Router>
         <div>
-          <DatabaseHandler />
           <Route exact path="/" component={Auth} />
         </div>
       </Router>
