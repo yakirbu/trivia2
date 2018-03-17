@@ -15,7 +15,7 @@ firebase.initializeApp(config);
 var database = firebase.database();
 var auth = firebase.auth();
 
-class DatabaseHandler  {
+class DatabaseHandler {
     static user;
 
     //Template for a single request (not a listener)
@@ -55,4 +55,4 @@ class DatabaseHandler  {
 
 }
 
-export { DatabaseHandler , auth, database };
+export { DatabaseHandler, auth, database };
