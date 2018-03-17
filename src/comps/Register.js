@@ -35,7 +35,6 @@ class Register extends Component {
             if (user) {
                 var userPhone = "0" + user.phoneNumber.replace("+972", "");
 
-
                 DatabaseHandler.getDataOnceWhere(["Users"], ["phone", userPhone], (snapshot) => {
                     if (snapshot) {
                         //already verified

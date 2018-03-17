@@ -13,6 +13,7 @@ import MainGame from './comps/MainGame'
 import Auth from './comps/Auth'
 import DatabaseHandler from './comps/DatabaseHandler';
 
+
 class App extends Component {
   render() {
     return (

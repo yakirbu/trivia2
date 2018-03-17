@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import MainGame from './MainGame';
-import { Helmet } from "react-helmet";
-
 
 import './MainScreen.css';
 
