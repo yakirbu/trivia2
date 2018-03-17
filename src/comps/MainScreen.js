@@ -43,11 +43,12 @@ class MainScreen extends Component {
                                 </div>
                             </div>
                             :
-                            <div>
-                                {console.log(this.props.game.status)}
-                                <h3>{"₪" + this.props.general.bidAmount}</h3>
-                                <h4>{this.props.general.gameDescription}</h4>
-                            </div>
+                            this.props.general.bidAmount && this.props.game.status && this.props.game.status == 'off' ?
+                                <div>
+                                    {console.log(this.props.game.status)}
+                                    <h3>{"₪" + this.props.general.bidAmount}</h3>
+                                    <h4>{this.props.general.gameDescription}</h4>
+                                </div> : ''
                         }
 
 

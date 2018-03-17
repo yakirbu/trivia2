@@ -5,6 +5,9 @@ import React, { Component } from 'react';
 import MainGame from './MainGame';
 import Register from './Register';
 
+//TESTING PURPOSES - DELETE
+import GameScreen from './GameScreen';
+
 class Auth extends Component {
     constructor(props) {
         super(props);
@@ -17,6 +20,8 @@ class Auth extends Component {
 
                 {/* TO:DO - REGISTRATION */}
                 <Register />
+                {/*
+                <GameScreen /> */}
             </div>
         )
     }

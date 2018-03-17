@@ -15,8 +15,34 @@ firebase.initializeApp(config);
 var database = firebase.database();
 var auth = firebase.auth();
 
+var listenNodes = [];
+var questionListeners = [];
 class DatabaseHandler {
-    static user;
+
+
+    //create a listener for a specific node, avoids double listener to same node
+    static listen(path, callback, type) {
+        if (listenNodes && !listenNodes.find(item => { return item === path })) {
+            listenNodes.push(path);
+            if (type && type == 'question') {
+                this.detachListeners(questionListeners);
+                questionListeners.push(path);
+            }
+            database.ref(path).on('value', (snap) => {
+                callback(snap.val());
+            });
+        }
+        else
+            console.log("already listening to this node");
+    }
+
+    static detachListeners(list) {
+        for (var i = 0; i < list.count; i++) {
+            database.ref(list[i]).off();
+            list.splice(i, 1);
+        }
+    }
+
 
     //Template for a single request (not a listener)
     //path: array, callback: function()
@@ -44,6 +70,7 @@ class DatabaseHandler {
 
 
     static getTime(callback) {
+        console.log("getting time now!");
         axios.get('https://us-central1-questions-59ee6.cloudfunctions.net/app/api/time')
             .then(function (response) {
                 callback(response.data);
