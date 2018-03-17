@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import * as firebase from "firebase";
 import axios from 'axios';
 
@@ -16,22 +15,8 @@ firebase.initializeApp(config);
 var database = firebase.database();
 var auth = firebase.auth();
 
-class DatabaseHandler extends Component {
+class DatabaseHandler  {
     static user;
-
-    constructor(props) {
-        super(props);
-
-
-
-        //USAGE EXAMPLE:
-        /*
-        this.getDataOnce(["Games", "1518613451928"], (snap) => {
-            console.log(snap.val());
-        });
-        */
-    }
-
 
     //Template for a single request (not a listener)
     //path: array, callback: function()
@@ -56,9 +41,7 @@ class DatabaseHandler extends Component {
     }
 
 
-    static getFirebaseAuth() {
-        return auth;
-    }
+
 
     static getTime(callback) {
         axios.get('https://us-central1-questions-59ee6.cloudfunctions.net/app/api/time')
@@ -70,11 +53,6 @@ class DatabaseHandler extends Component {
             });
     }
 
-    render() {
-        return (
-            <div />
-        )
-    }
 }
 
-export default DatabaseHandler;
+export { DatabaseHandler , auth, database };

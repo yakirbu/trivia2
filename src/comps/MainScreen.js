@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import MainGame from './MainGame';
 import { Helmet } from "react-helmet";
-
+import {database} from './DatabaseHandler';
 
 import './MainScreen.css';
 
@@ -10,7 +10,15 @@ import game_logo from '../images/logo-icon.png'
 
 
 class MainScreen extends Component {
-
+    state = {
+        general: {}
+      };
+      
+      componentDidMount() {
+       database.ref('/General').on('value', (snap) => {      
+          this.setState({ general: snap.val() });
+        });
+      }
     render() {
         return (
             <div className="m_s_m">
@@ -19,8 +27,8 @@ class MainScreen extends Component {
                     <img className="game_logo" src={game_logo} />
 
                     <div className="game_desc">
-                        <h3>₪1500</h3>
-                        <h4>המשחק הבא: יום שני, 21:00</h4>
+                        <h3>{this.state.general.bidAmount}</h3>
+                        <h4>{this.state.general.gameDescription}</h4>
                     </div>
 
                     <div className="game_player_data">
