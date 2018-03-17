@@ -7,25 +7,50 @@ import './MainScreen.css';
 //IMG
 import game_logo from '../images/logo-icon.png'
 
-
+var that;
 class MainScreen extends Component {
+
 
     constructor(props) {
         super(props);
 
+        that = this;
+
     }
 
+    /*
+    startGame() {
+        that.setState({
+            startGame:true,
+        })   
+    }
+    */
 
     render() {
         return (
             <div className="m_s_m">
-
                 <div className="main_screen_container">
                     <img className="game_logo" src={game_logo} />
 
                     <div className="game_desc">
-                        <h3>{"₪" + this.props.general.bidAmount}</h3>
-                        <h4>{this.props.general.gameDescription}</h4>
+
+                        {this.props.game != undefined && this.props.game.status == "active" ?
+                            <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+                                {console.log(this.props.game.status)}
+                                <h5 style={{ margin: "8px" }}>המשחק התחיל!</h5>
+                                <div onClick={() => this.props.startGame()} className="game_button" style={{ fontSize: "15px" }}>
+                                    הכנס למשחק
+                                </div>
+                            </div>
+                            :
+                            <div>
+                                {console.log(this.props.game.status)}
+                                <h3>{"₪" + this.props.general.bidAmount}</h3>
+                                <h4>{this.props.general.gameDescription}</h4>
+                            </div>
+                        }
+
+
                     </div>
 
                     <div className="game_player_data">

@@ -24,17 +24,30 @@ class MainGame extends Component {
         that = this;
         this.state = {
             mute: true,
-            general: {}
+            general: {},
+            currentGame: {},
+            startGame: false,
         }
 
     }
 
+    startGame() {
+        that.setState({
+            startGame: true,
+        })
+    }
 
     componentDidMount() {
 
         //listen to general changes
-        database.ref('/General').on('value', (snap) => {
-            this.setState({ general: snap.val() });
+        database.ref('/General').on('value', (generalSnap) => {
+            this.setState({ general: generalSnap.val() });
+
+
+            database.ref('/Games/' + generalSnap.val().currentGame).on('value', (gameSnap) => {
+                this.setState({ currentGame: gameSnap.val() });
+
+            });
         });
 
 
@@ -96,8 +109,18 @@ class MainGame extends Component {
                         </div>
                     </div>
 
+
                     <div className="main_screen_g">
-                        <MainScreen general={this.state.general} user={this.props.user} />
+                        {!this.state.startGame ?
+                            <MainScreen
+                                game={this.state.currentGame}
+                                general={this.state.general}
+                                user={this.props.user}
+                                startGame={() => this.startGame()}
+                            />
+                            :
+                            <GameScreen />
+                        }
                     </div>
 
 
