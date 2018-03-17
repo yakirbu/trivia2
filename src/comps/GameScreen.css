@@ -6,7 +6,7 @@
 .title_question_container{
     width: 40%;
     max-width: 200px;
-    height: 3vh;
+    height: 20px;
     background-color: white;
     border-radius: 20px 20px 0 0;
     text-align: center;
@@ -22,11 +22,13 @@
 .question_container{
     width: 80%;
     max-width: 400px;
-    height: 50vh;
     border-radius: 30px;
     background-color: white;
     color:#aeaeae;
 }
+
+
+/* TIMER */
 .question_timer{
     margin-top:20px;
     display: flex;
@@ -42,4 +44,39 @@
 .react-sweet-progress-symbol{
     font-size:15px !important;
     margin-bottom: 5px;
+}
+
+
+.q_w_ans{
+    padding:15px;
+}
+.question_text{  
+    text-align: center;
+}
+
+.question_options{
+    margin:20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+.q_option{
+    width: 90%;
+    height: 50px;
+    border-radius: 30px;
+    border: 1.5px #eaeaea solid;
+    background-color: white;
+
+    font-size: 17px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 3px 0;
+}
+
+.q_option h5{
+    font-weight: 500 !important;
 }

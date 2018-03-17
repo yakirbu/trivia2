@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Hls from 'hls.js';
-import { database } from './DatabaseHandler';
+import { database, DatabaseHandler } from './DatabaseHandler';
 
 //CSS
 import './MainGame.css';
@@ -26,6 +26,7 @@ class MainGame extends Component {
             mute: true,
             general: {},
             currentGame: {},
+            currentQuestion: {},
             startGame: false,
         }
 
@@ -40,15 +41,20 @@ class MainGame extends Component {
     componentDidMount() {
 
         //listen to general changes
-        database.ref('/General').on('value', (generalSnap) => {
-            this.setState({ general: generalSnap.val() });
+        DatabaseHandler.listen('/General', (general) => {
+            this.setState({ general: general });
 
+            //listen to game changes
+            DatabaseHandler.listen('/Games/' + general.currentGame, (game) => {
+                this.setState({ currentGame: game });
 
-            database.ref('/Games/' + generalSnap.val().currentGame).on('value', (gameSnap) => {
-                this.setState({ currentGame: gameSnap.val() });
-
+                DatabaseHandler.listen('/Questions/' + game.startTime + "/" + game.currentQuestionId, (question) => {
+                    this.setState({ currentQuestion: question });
+                }, "question");
             });
-        });
+
+        })
+
 
 
         //start streaming
@@ -119,7 +125,9 @@ class MainGame extends Component {
                                 startGame={() => this.startGame()}
                             />
                             :
-                            <GameScreen />
+                            <GameScreen
+                                question={this.state.currentQuestion}
+                            />
                         }
                     </div>
 

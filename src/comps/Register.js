@@ -39,13 +39,16 @@ class Register extends Component {
                     if (snapshot) {
                         //already verified
                         snapshot.forEach(function (childSnapshot) {
-                            DatabaseHandler.user = childSnapshot.val();
                             that.setState({
                                 verified: true,
                                 user: childSnapshot.val(),
                             })
                             console.log(childSnapshot.val().name);
                         });
+                    }
+                    else {
+                        if (that.state.name != "")
+                            that.createNewUser(userPhone);
                     }
                 });
 
@@ -100,40 +103,29 @@ class Register extends Component {
             document.getElementById("phoneNum").value = "";
 
             console.log("מספר תקין!");
-            DatabaseHandler.getDataOnceWhere(["Users"], ["phone", phoneNum], (snapshot) => {
-                if (snapshot) {
-                    //already verified
-                    snapshot.forEach(function (childSnapshot) {
-                        DatabaseHandler.user = childSnapshot.val();
-                        that.setState({
-                            verified: true
-                        })
-                        console.log(childSnapshot.val().name);
-                    });
-                }
-                else {
-                    console.log("doesn't exists!");
 
-                    //TO:DO - CHECK PHONE NUMBER SYNTAX
-                    var appVerifier = window.recaptchaVerifier;
-                    console.log(appVerifier);
-                    auth.signInWithPhoneNumber("+972" + phoneNum, appVerifier)
-                        .then(function (confirmationResult) {
-                            that.setState({
-                                smsSent: true
-                            })
-                            // SMS sent. Prompt user to type the code from the message, then sign the
-                            // user in with confirmationResult.confirm(code).
-                            window.confirmationResult = confirmationResult;
-                        }).catch(function (error) {
-                            console.log(error);
-                            // Error; SMS not sent
-                            // ...
-                        });
+            console.log("doesn't exists!");
+
+            //TO:DO - CHECK PHONE NUMBER SYNTAX
+            var appVerifier = window.recaptchaVerifier;
+            console.log(appVerifier);
+            auth.signInWithPhoneNumber("+972" + phoneNum, appVerifier)
+                .then(function (confirmationResult) {
+                    that.setState({
+                        smsSent: true
+                    })
+                    // SMS sent. Prompt user to type the code from the message, then sign the
+                    // user in with confirmationResult.confirm(code).
+                    window.confirmationResult = confirmationResult;
+                }).catch(function (error) {
+                    console.log(error);
+                    // Error; SMS not sent
+                    // ...
+                });
 
 
-                }
-            })
+
+
         }
         else {
             if (!that.state.recaptcha)
@@ -155,8 +147,8 @@ class Register extends Component {
                 // User signed in successfully.
                 console.log("correct!")
                 var user = result.user;
-                var userPhone = "0" + user.phoneNumber.replace("+972", "");
-                that.createNewUser(userPhone);
+                //var userPhone = "0" + user.phoneNumber.replace("+972", "");
+                //that.createNewUser(userPhone);
                 // ...
             }).catch(function (error) {
                 // User couldn't sign in (bad verification code?)
