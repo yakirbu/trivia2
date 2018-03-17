@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import MainGame from './MainGame';
-import { Helmet } from "react-helmet";
 import {database} from './DatabaseHandler';
 
 import './MainScreen.css';

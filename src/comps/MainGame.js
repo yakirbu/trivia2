@@ -11,6 +11,7 @@ import unmuteIcon from '../images/unmute.png';
 
 //COMPS
 import MainScreen from '../comps/MainScreen';
+import GameScreen from '../comps/GameScreen';
 
 var video;
 var that;
@@ -85,7 +86,7 @@ class MainGame extends Component {
                     </div>
 
                     <div className="main_screen_g">
-                        <MainScreen />
+                        <GameScreen />
                     </div>
 
 
