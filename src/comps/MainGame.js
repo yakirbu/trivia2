@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Hls from 'hls.js';
+import { database } from './DatabaseHandler';
 
 //CSS
 import './MainGame.css';
@@ -22,12 +23,22 @@ class MainGame extends Component {
 
         that = this;
         this.state = {
-            mute: true
+            mute: true,
+            general: {}
         }
+
     }
+
 
     componentDidMount() {
 
+        //listen to general changes
+        database.ref('/General').on('value', (snap) => {
+            this.setState({ general: snap.val() });
+        });
+
+
+        //start streaming
         if (Hls.isSupported()) {
             video = document.getElementById('video');
             var hls = new Hls();
@@ -86,7 +97,7 @@ class MainGame extends Component {
                     </div>
 
                     <div className="main_screen_g">
-                        <GameScreen />
+                        <MainScreen general={this.state.general} user={this.props.user} />
                     </div>
 
 

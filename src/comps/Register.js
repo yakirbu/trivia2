@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {database, auth, DatabaseHandler} from './DatabaseHandler';
+import { database, auth, DatabaseHandler } from './DatabaseHandler';
 import * as firebase from 'firebase';
 //CSS
 import './Register.css';
@@ -25,6 +25,7 @@ class Register extends Component {
             verified: false,
             smsSent: false,
             recaptcha: false,
+            user: null,
         }
     }
 
@@ -40,7 +41,8 @@ class Register extends Component {
                         snapshot.forEach(function (childSnapshot) {
                             DatabaseHandler.user = childSnapshot.val();
                             that.setState({
-                                verified: true
+                                verified: true,
+                                user: childSnapshot.val(),
                             })
                             console.log(childSnapshot.val().name);
                         });
@@ -183,6 +185,7 @@ class Register extends Component {
             return database.ref().update(updates).then((s) => {
                 that.setState({
                     verified: true,
+                    user: user,
                 })
             });
 
@@ -238,7 +241,7 @@ class Register extends Component {
 
 
                     </div>
-                    : <MainGame />}
+                    : <MainGame user={this.state.user} />}
             </div>
         )
     }
