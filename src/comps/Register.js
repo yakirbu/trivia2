@@ -35,16 +35,18 @@ class Register extends Component {
             if (user) {
                 var userPhone = "0" + user.phoneNumber.replace("+972", "");
 
-                DatabaseHandler.getDataOnceWhere(["Users"], ["phone", userPhone], (snapshot) => {
-                    if (snapshot) {
+                DatabaseHandler.getDataOnceWhere(["Users"], ["phone", userPhone], (childSnapshot) => {
+                    if (childSnapshot) {
                         //already verified
-                        snapshot.forEach(function (childSnapshot) {
+
+                        DatabaseHandler.listen("Users/" + childSnapshot.val().createdAt, (us) => {
                             that.setState({
                                 verified: true,
-                                user: childSnapshot.val(),
+                                user: us,
                             })
-                            console.log(childSnapshot.val().name);
-                        });
+                            console.log(us.name);
+                        })
+
                     }
                     else {
                         if (that.state.name != "")

@@ -19,15 +19,16 @@ var listenNodes = [];
 var questionListeners = [];
 class DatabaseHandler {
 
-
     //create a listener for a specific node, avoids double listener to same node
     static listen(path, callback, type) {
         if (listenNodes && !listenNodes.find(item => { return item === path })) {
             listenNodes.push(path);
-            if (type && type == 'question') {
-                this.detachListeners(questionListeners);
+            if (type == 'question') {
+                this.detachListeners();
                 questionListeners.push(path);
             }
+            else if (type == 'questionData')
+                questionListeners.push(path);
             database.ref(path).on('value', (snap) => {
                 callback(snap.val());
             });
@@ -36,11 +37,13 @@ class DatabaseHandler {
             console.log("already listening to this node");
     }
 
-    static detachListeners(list) {
-        for (var i = 0; i < list.count; i++) {
-            database.ref(list[i]).off();
-            list.splice(i, 1);
-        }
+    static detachListeners() {
+        questionListeners.forEach(item => {
+            console.log("remove-" + item + "-from listening");
+            database.ref(item).off();
+            questionListeners = questionListeners.filter(e => e != item);
+            listenNodes = listenNodes.filter(e => e != item);
+        })
     }
 
 
@@ -59,11 +62,52 @@ class DatabaseHandler {
     //path: array, where: array, callback: function()
     static getDataOnceWhere(path, where, callback) {
         return database.ref('/' + path.join("/")).orderByChild(where[0]).equalTo(where[1]).once('value').then(function (snapshot) {
-            if (snapshot.numChildren() > 0)
-                callback(snapshot);
+            if (snapshot.numChildren() > 0) {
+                snapshot.forEach(function (childSnapshot) {
+                    callback(childSnapshot);
+                });
+            }
             else
                 callback(null);
         });
+    }
+
+
+    static updateUserAns(qnum, ans, uid, gid, qid, callback) {
+
+        //update question num
+        database.ref('/QuestionData/' + qid).transaction(function (qData) {
+            console.log("0choosen!!! " + qid);
+            if (qData) {
+                console.log("1choosen!!!");
+                if (ans == 1) {
+                    console.log("2choosen!!!");
+                    qData.option1Num++;
+                }
+                else if (ans == 2) {
+                    qData.option2Num++;
+                }
+                else if (ans == 3) {
+                    qData.option3Num++;
+                }
+            }
+            return qData;
+        });
+
+
+        //update user ans
+        var userAns = {};
+        userAns[qnum] = ans;
+        database.ref("/UserAns/" + uid + "/" + gid).update(userAns).then((s) => {
+            callback(s);
+        })
+    }
+
+
+    static updateUserGameStatus(uid, status, callback) {
+        database.ref('/Users/' + uid).update({ gameStatus: status }).then((s) => {
+            callback(s);
+        })
     }
 
 

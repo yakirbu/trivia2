@@ -6,7 +6,7 @@
 .title_question_container{
     width: 40%;
     max-width: 200px;
-    height: 20px;
+
     background-color: white;
     border-radius: 20px 20px 0 0;
     text-align: center;
@@ -28,8 +28,18 @@
 }
 
 
+.p_status{
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-right: 25px;
+    font-weight: 500 !important;
+    font-size: 16px;
+}
+
 /* TIMER */
 .question_timer{
+    position: relative;
     margin-top:20px;
     display: flex;
     align-items: center;
@@ -62,21 +72,48 @@
 
 }
 .q_option{
+    cursor: pointer;
+
     width: 90%;
     height: 50px;
     border-radius: 30px;
     border: 1.5px #eaeaea solid;
     background-color: white;
-
     font-size: 17px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
     margin: 3px 0;
+
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    position:relative;
+
 }
 
 .q_option h5{
     font-weight: 500 !important;
+}
+
+.results{
+    height: 100%;
+    width: 100%;
+    background-color: #d4f3bf;
+    border-radius: 30px;
+    clip-path: inset(0px 100% 0px 0px); 
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;  
+    z-index: 1;
+}
+
+.option_text{
+    position: absolute;
+
+    z-index: 2;
+    
 }
