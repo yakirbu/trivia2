@@ -8,6 +8,17 @@ import './GameScreen.css';
 //COMPS
 import { DatabaseHandler } from './DatabaseHandler';
 
+//SOUND
+import qStartSound from '../audio/question.mp3';
+import chooseOptionSound from '../audio/selection.mp3';
+import rightAnsSound from '../audio/rightAns.mp3';
+import wrongAnsSound from '../audio/wrongAns.mp3';
+window.createjs.Sound.registerSound(qStartSound, "qStartSound");
+window.createjs.Sound.registerSound(chooseOptionSound, "chooseOptionSound");
+window.createjs.Sound.registerSound(rightAnsSound, "rightAnsSound");
+window.createjs.Sound.registerSound(wrongAnsSound, "wrongAnsSound");
+
+
 var that;
 var timer;
 var questionStarted = false;
@@ -16,6 +27,7 @@ const QUESTION_TIME = 10;
 var userChosenOption = 0;
 var showingResults = false;
 var lastQStat = "";
+var lastQDataStat = "";
 var qNumAns = {};
 class GameScreen extends Component {
     constructor(props) {
@@ -109,6 +121,10 @@ class GameScreen extends Component {
 
             that.isUserStillActive((active) => {
                 if (active) {
+                    setTimeout(function () {
+                        window.createjs.Sound.play("chooseOptionSound");
+                    }, 50);
+
                     DatabaseHandler.updateUserAns(that.props.question.num, userChosenOption,
                         that.props.user.createdAt, that.props.game.startTime, that.props.question.questionId, (s) => {
                             console.log("completed!");
@@ -137,7 +153,7 @@ class GameScreen extends Component {
                 callback(true);
             }
             else {
-                //If question&answers list are null, get the last questionData and compare with user previous answers
+                //If question&answers list is null, get the last questionData and compare with user previous answers
                 if (!qNumAns[this.props.question.num - 1]) {
                     DatabaseHandler.getDataOnceWhere(["Questions", this.props.game.startTime], ["num", this.props.question.num - 1], (que) => {
                         DatabaseHandler.getDataOnce(["QuestionData", que.val().questionId], (qData) => {
@@ -174,6 +190,13 @@ class GameScreen extends Component {
         if (that.props.question.status == 'active') {
             console.log("here");
 
+            // var audio = new Audio('../audio/question.mp3');
+            //audio.play();
+            //$('#q_sound')[0].play()
+
+
+
+
             var t0 = performance.now();
             DatabaseHandler.getTime((time) => {
                 var t1 = performance.now();
@@ -181,6 +204,22 @@ class GameScreen extends Component {
                 this.resetOptions();
                 currTime = time - (t1 - t0);
                 that.timer = setInterval(() => that.test(), 100);
+
+                var timeLeft = ((currTime - that.props.question.startTime) / 1000);
+                console.log(timeLeft + " " + (timeLeft * 100));
+                if (timeLeft < QUESTION_TIME) {
+
+
+                    setTimeout(function () {
+                        window.createjs.Sound.play("qStartSound", { startTime: (timeLeft * 100), duration: 11000 });
+                    }, 50);
+
+                    /*
+                    this.audio = new Audio(qStartSound);
+                    this.audio.currentTime = timeLeft;
+                    that.audio.play()
+                    */
+                }
 
             })
 
@@ -196,13 +235,53 @@ class GameScreen extends Component {
         questionStarted = false;
     }
 
+
+
+    lockResults(specificNum, isTrue, rightAns) {
+        for (var i = 1; i < 4; i++) {
+            $('#result' + i).css({
+                "background-color": "#eaeaea",
+            });
+        }
+        if (specificNum) {
+            $('#result' + specificNum).css({
+                "background-color": isTrue ? "#d4f3bf" : "#f3bfbf",
+            });
+            $('#result' + rightAns).css({
+                "background-color": "#d4f3bf",
+            });
+        }
+    }
+
     showResults() {
         setTimeout(() => {
+            var userOpt = userChosenOption;
             qNumAns[this.props.question.num] = this.props.questionData.ans;
 
             this.resetOptions();
             var data = this.props.questionData;
             var total = data.option1Num + data.option2Num + data.option3Num;
+
+            if (userOpt != 0) {
+                var isRight = userOpt == this.props.questionData.ans;
+                if (!isRight) {
+                    //wrong ans
+                    DatabaseHandler.updateUserGameStatus(this.props.user.createdAt, "watching", (s) => { });
+                    setTimeout(function () {
+                        window.createjs.Sound.play("wrongAnsSound");
+                    }, 50);
+                }
+                else {
+                    //right ans
+                    setTimeout(function () {
+                        window.createjs.Sound.play("rightAnsSound");
+                    }, 50);
+                }
+                this.lockResults(userOpt, isRight, this.props.questionData.ans);
+            }
+            else {
+                this.lockResults(this.props.questionData.ans, true, this.props.questionData.ans);
+            }
 
             var res1 = Math.round(100 - ((data.option1Num / total) * 100));
             this.animate('#result1', "clip-path", 100, res1);
@@ -247,13 +326,14 @@ class GameScreen extends Component {
             this.start();
         }
 
-        lastQStat = this.props.question.status;
-
-        if (!showingResults && this.props.question.status == 'results' && this.props.question && this.props.questionData && this.props.questionData.questionId == this.props.question.questionId) {
+        if (lastQStat != this.props.question.status && !showingResults && this.props.question.status == 'results' && this.props.question && this.props.questionData && this.props.questionData.questionId == this.props.question.questionId) {
             showingResults = true;
             console.log("question-data-starts-now")
             this.showResults();
         }
+
+        lastQStat = this.props.question.status;
+
 
         return (
             <div>

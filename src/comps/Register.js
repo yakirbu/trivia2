@@ -177,10 +177,15 @@ class Register extends Component {
             var updates = {};
             updates['/Users/' + time] = user;
             return database.ref().update(updates).then((s) => {
-                that.setState({
-                    verified: true,
-                    user: user,
+
+                DatabaseHandler.listen("Users/" + user.createdAt, (us) => {
+                    that.setState({
+                        verified: true,
+                        user: us,
+                    })
+                    console.log(us.name);
                 })
+
             });
 
         })
