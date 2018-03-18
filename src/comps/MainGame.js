@@ -50,7 +50,10 @@ class MainGame extends Component {
 
             //listen to game changes
             DatabaseHandler.listen('/Games/' + general.currentGame, (game) => {
-                this.setState({ currentGame: game });
+                this.setState({
+                    currentGame: game,
+                    startGame: game.status != 'active' ? false : this.state.startGame
+                });
                 console.log("currentQuestion in game is now: " + game.currentQuestionId);
 
                 //listen to current question changes
@@ -144,12 +147,7 @@ class MainGame extends Component {
 
                     <div className="main_screen_g">
                         {!this.state.startGame ?
-                            <MainScreen
-                                game={this.state.currentGame}
-                                general={this.state.general}
-                                user={this.props.user}
-                                startGame={() => this.startGame()}
-                            />
+                            <MainScreen2 />
                             :
                             <GameScreen
                                 game={this.state.currentGame}
@@ -167,5 +165,17 @@ class MainGame extends Component {
         )
     }
 }
+
+function MainScreen2() {
+    return (
+        <MainScreen
+            game={that.state.currentGame}
+            general={that.state.general}
+            user={that.props.user}
+            startGame={() => that.startGame()}
+        />
+    )
+}
+
 
 export default MainGame;
