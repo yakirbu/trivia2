@@ -27,15 +27,19 @@ class MainGame extends Component {
             general: {},
             currentGame: {},
             currentQuestion: {},
+            currQuestionData: {},
             startGame: false,
         }
 
     }
 
     startGame() {
-        that.setState({
-            startGame: true,
+        DatabaseHandler.updateUserGameStatus(this.props.user.createdAt, "active", (s) => {
+            that.setState({
+                startGame: true,
+            })
         })
+
     }
 
     componentDidMount() {
@@ -47,9 +51,31 @@ class MainGame extends Component {
             //listen to game changes
             DatabaseHandler.listen('/Games/' + general.currentGame, (game) => {
                 this.setState({ currentGame: game });
+                console.log("currentQuestion in game is now: " + game.currentQuestionId);
 
+                //listen to current question changes
                 DatabaseHandler.listen('/Questions/' + game.startTime + "/" + game.currentQuestionId, (question) => {
-                    this.setState({ currentQuestion: question });
+                    console.log("question-" + question.questionId)
+
+                    //listen to current question data changes
+                    if (question.status == "results") {
+                        DatabaseHandler.getDataOnce(["QuestionData", question.questionId], (qData) => {
+                            console.log("questionDataOnce-" + question.questionId)
+                            this.setState({ currQuestionData: qData.val() }, () => {
+                                this.setState({ currentQuestion: question });
+                            });
+                        });
+                    }
+                    else
+                        this.setState({ currentQuestion: question });
+
+                    /*
+                    DatabaseHandler.listen('/QuestionData/' + question.questionId, (questionData) => {
+                        console.log("questionData-" + question.questionId)
+                        this.setState({ currQuestionData: questionData });
+                    }, "questionData");
+                    */
+
                 }, "question");
             });
 
@@ -126,7 +152,10 @@ class MainGame extends Component {
                             />
                             :
                             <GameScreen
+                                game={this.state.currentGame}
                                 question={this.state.currentQuestion}
+                                questionData={this.state.currQuestionData}
+                                user={this.props.user}
                             />
                         }
                     </div>
