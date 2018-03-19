@@ -57,9 +57,9 @@ class GameScreen extends Component {
     controlVideo() {
         console.log("opening: " + that.props.general.streamStatus + " " + videoPlaying)
         if (that.props.general.streamStatus == 'active' && !videoPlaying) {
+            video = document.getElementById('video');
             //start streaming
             if (Hls.isSupported()) {
-                video = document.getElementById('video');
                 if (!video)
                     return;
                 var hls = new Hls();
