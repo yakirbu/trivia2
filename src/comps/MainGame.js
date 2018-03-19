@@ -26,9 +26,8 @@ class MainGame extends Component {
     }
 
     componentDidMount() {
-
+        video = document.getElementById('video');
         if (Hls.isSupported()) {
-            video = document.getElementById('video');
             var hls = new Hls();
             hls.loadSource('http://77.138.49.203:1935/live/rtmp.stream/playlist.m3u8');
             hls.attachMedia(video);
