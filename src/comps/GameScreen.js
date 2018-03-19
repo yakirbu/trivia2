@@ -32,6 +32,7 @@ var lastQDataStat = "";
 var videoPlaying = false;
 var qNumAns = {};
 var video;
+var videoInter;
 class GameScreen extends Component {
     constructor(props) {
         super(props);
@@ -69,6 +70,8 @@ class GameScreen extends Component {
                     videoPlaying = true;
                     video.play();
                     setInterval(that.updateVideo(), 24);
+                    that.videoInter = setInterval(() => that.advanceVideo(2), 5000);
+                    //that.advanceVideo(5);
                 });
 
             }
@@ -84,14 +87,43 @@ class GameScreen extends Component {
             if (video)
                 video.pause();
         }
+
     }
 
 
     updateVideo() {
+        console.log("wtf is going on")
         var canvas = document.getElementById('canvas');
         var ctx = canvas.getContext('2d');
         var myVideo = document.getElementById('video');
         ctx.drawImage(myVideo, 0, 0, 640, 480);
+
+        /*
+        var currTime = myVideo.currentTime;
+        var dur = myVideo.duration;
+        console.log(currTime + " " + dur)
+        if (currTime < dur)
+            myVideo.currentTime += (dur - currTime);
+            */
+    }
+
+    advanceVideo(times) {
+        var video = document.getElementById('video');
+        var currTime = video.currentTime;
+        var dur = video.duration;
+        if (dur - currTime > 3)
+            video.currentTime += (dur - currTime) / 2;
+        console.log(currTime + " " + dur)
+        /*
+        if (times > 0) {
+            setTimeout(() => {
+                video = document.getElementById('video');
+                video.currentTime = video.currentTime + 3;
+                that.advanceVideo(times - 1);
+            }, 1000)
+        }
+        */
+
     }
 
 
