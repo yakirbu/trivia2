@@ -38,7 +38,6 @@ class GameScreen extends Component {
         super(props);
 
         that = this;
-
         this.state = {
             time: 0
         }
@@ -55,11 +54,12 @@ class GameScreen extends Component {
 
 
     controlVideo() {
-        console.log("opening: " + that.props.general.streamStatus + " " + videoPlaying)
+        console.log("opening: " + that.props.general.streamStatus + " " + videoPlaying);
+        video = this.refs.video;
         if (that.props.general.streamStatus == 'active' && !videoPlaying) {
-            video = document.getElementById('video');
             //start streaming
             if (Hls.isSupported()) {
+                
                 if (!video)
                     return;
                 var hls = new Hls();
@@ -448,7 +448,7 @@ class GameScreen extends Component {
         lastQStat = this.props.question.status;
 
         if ((that.props.general.streamStatus == 'active' && !videoPlaying) || (that.props.general.streamStatus == 'off' && videoPlaying)) {
-            this.controlVideo();
+            //this.controlVideo(); HTML is not fully rendered yet so controlVideo doesn't know what <video> is
         }
 
 
@@ -484,7 +484,7 @@ class GameScreen extends Component {
                                 />
 
                                 <div id="video_div" style={{ visibility: this.props.general.streamStatus == 'active' ? 'visible' : 'hidden' }} className={this.props.question.status == 'active' || this.props.question.status == 'results' ? "q_video_small" : "q_video_large"}>
-                                    <video id="video" muted autoPlay loop className={this.props.question.status == 'active' || this.props.question.status == 'results' ? "q_video_small" : "q_video_large"} ></video>
+                                    <video id="video" ref="video" muted autoPlay loop className={this.props.question.status == 'active' || this.props.question.status == 'results' ? "q_video_small" : "q_video_large"} ></video>
                                     <canvas id="canvas" height="50" width="50"></canvas>
                                 </div>
                             </div>
