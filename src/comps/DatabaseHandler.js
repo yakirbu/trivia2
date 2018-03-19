@@ -30,7 +30,7 @@ class DatabaseHandler {
             else if (type == 'questionData')
                 questionListeners.push(path);
             database.ref(path).on('value', (snap) => {
-                callback(snap.val());
+                callback(snap);
             });
         }
         else

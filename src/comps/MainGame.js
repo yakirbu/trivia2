@@ -46,38 +46,31 @@ class MainGame extends Component {
 
         //listen to general changes
         DatabaseHandler.listen('/General', (general) => {
-            this.setState({ general: general });
+            this.setState({ general: general.val() });
 
             //listen to game changes
-            DatabaseHandler.listen('/Games/' + general.currentGame, (game) => {
+            DatabaseHandler.listen('/Games/' + general.val().currentGame, (game) => {
                 this.setState({
-                    currentGame: game,
-                    startGame: game.status != 'active' ? false : this.state.startGame
+                    currentGame: game.val(),
+                    startGame: game.val().status != 'active' ? false : this.state.startGame
                 });
-                console.log("currentQuestion in game is now: " + game.currentQuestionId);
+                console.log("currentQuestion in game is now: " + game.val().currentQuestionId);
 
                 //listen to current question changes
-                DatabaseHandler.listen('/Questions/' + game.startTime + "/" + game.currentQuestionId, (question) => {
-                    console.log("question-" + question.questionId)
+                DatabaseHandler.listen('/Questions/' + game.key + "/" + game.val().currentQuestionId, (question) => {
+                    console.log("question-" + question.key)
 
-                    //listen to current question data changes
-                    if (question.status == "results") {
-                        DatabaseHandler.getDataOnce(["QuestionData", question.questionId], (qData) => {
-                            console.log("questionDataOnce-" + question.questionId)
+                    //getting current question data once
+                    if (question.val().status == "results") {
+                        DatabaseHandler.getDataOnce(["QuestionData", question.key], (qData) => {
+                            console.log("questionDataOnce-" + question.key)
                             this.setState({ currQuestionData: qData.val() }, () => {
-                                this.setState({ currentQuestion: question });
+                                this.setState({ currentQuestion: question.val() });
                             });
                         });
                     }
                     else
-                        this.setState({ currentQuestion: question });
-
-                    /*
-                    DatabaseHandler.listen('/QuestionData/' + question.questionId, (questionData) => {
-                        console.log("questionData-" + question.questionId)
-                        this.setState({ currQuestionData: questionData });
-                    }, "questionData");
-                    */
+                        this.setState({ currentQuestion: question.val() });
 
                 }, "question");
             });
@@ -85,6 +78,7 @@ class MainGame extends Component {
         })
 
 
+        /*
 
         //start streaming
         if (Hls.isSupported()) {
@@ -103,6 +97,7 @@ class MainGame extends Component {
                 video.play();
             });
         }
+        */
 
     }
 
@@ -121,7 +116,8 @@ class MainGame extends Component {
     render() {
         return (
             <div>
-                <video id="video" muted autoPlay loop></video>
+                {/*
+                <video id="video" muted autoPlay loop></video> */}
                 <div className="main_game_container">
 
                     {/* TOP-BAR */}
@@ -150,6 +146,7 @@ class MainGame extends Component {
                             <MainScreen2 />
                             :
                             <GameScreen
+                                general={that.state.general}
                                 game={this.state.currentGame}
                                 question={this.state.currentQuestion}
                                 questionData={this.state.currQuestionData}

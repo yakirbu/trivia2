@@ -37,6 +37,37 @@
     font-size: 16px;
 }
 
+.q_b_c{
+    visibility: hidden;
+}
+
+#video_div{
+    visibility: visible;
+}
+
+.q_video_small, .q_video_small video{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width:50px;
+    height:50px;
+    border-radius: 50px;
+    margin-left: 25px;
+    z-index:3;
+}
+
+.q_video_large, .q_video_large video{
+    left: 0;
+    top: 0;
+    border-radius: 0;
+    margin-left: 0;
+    z-index:-1;
+    width: 100%;
+}
+
+
+
+
 /* TIMER */
 .question_timer{
     position: relative;

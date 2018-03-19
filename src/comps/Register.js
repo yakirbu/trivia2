@@ -39,10 +39,10 @@ class Register extends Component {
                     if (childSnapshot) {
                         //already verified
 
-                        DatabaseHandler.listen("Users/" + childSnapshot.val().createdAt, (us) => {
+                        DatabaseHandler.listen("Users/" + childSnapshot.key, (us) => {
                             that.setState({
                                 verified: true,
-                                user: us,
+                                user: us.val(),
                             })
                             console.log(us.name);
                         })
@@ -181,7 +181,7 @@ class Register extends Component {
                 DatabaseHandler.listen("Users/" + user.createdAt, (us) => {
                     that.setState({
                         verified: true,
-                        user: us,
+                        user: us.val(),
                     })
                     console.log(us.name);
                 })
