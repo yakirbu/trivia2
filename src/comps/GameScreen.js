@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Hls from 'hls.js';
+import enableInlineVideo from 'iphone-inline-video';
 import $ from 'jquery';
 import { Progress } from 'react-sweet-progress';
 import "react-sweet-progress/lib/style.css";
@@ -33,6 +34,7 @@ var videoPlaying = false;
 var qNumAns = {};
 var video;
 var videoInter;
+var videoCanvas;
 class GameScreen extends Component {
     constructor(props) {
         super(props);
@@ -57,11 +59,14 @@ class GameScreen extends Component {
     controlVideo() {
         console.log("opening: " + that.props.general.streamStatus + " " + videoPlaying)
         if (that.props.general.streamStatus == 'active' && !videoPlaying) {
-            video = document.getElementById('video');
+            video = this.refs.video;
+            //video = $('#video')[0];
+            if (!video)
+                return;
+            enableInlineVideo(video);
+
             //start streaming
             if (Hls.isSupported()) {
-                if (!video)
-                    return;
                 var hls = new Hls();
                 console.log("stream addess: " + this.props.general.streamAddress)
                 hls.loadSource(this.props.general.streamAddress);
@@ -71,13 +76,13 @@ class GameScreen extends Component {
                     video.play();
                     setInterval(that.updateVideo(), 24);
                     that.videoInter = setInterval(() => that.advanceVideo(2), 5000);
-                    //that.advanceVideo(5);
                 });
 
             }
             else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = this.props.general.streamAddress;
                 video.addEventListener('canplay', function () {
+                    videoPlaying = true;
                     video.play();
                 });
             }
@@ -88,6 +93,7 @@ class GameScreen extends Component {
                 video.pause();
         }
 
+
     }
 
 
@@ -97,14 +103,6 @@ class GameScreen extends Component {
         var ctx = canvas.getContext('2d');
         var myVideo = document.getElementById('video');
         ctx.drawImage(myVideo, 0, 0, 640, 480);
-
-        /*
-        var currTime = myVideo.currentTime;
-        var dur = myVideo.duration;
-        console.log(currTime + " " + dur)
-        if (currTime < dur)
-            myVideo.currentTime += (dur - currTime);
-            */
     }
 
     advanceVideo(times) {
@@ -114,15 +112,6 @@ class GameScreen extends Component {
         if (dur - currTime > 3)
             video.currentTime += (dur - currTime) / 2;
         console.log(currTime + " " + dur)
-        /*
-        if (times > 0) {
-            setTimeout(() => {
-                video = document.getElementById('video');
-                video.currentTime = video.currentTime + 3;
-                that.advanceVideo(times - 1);
-            }, 1000)
-        }
-        */
 
     }
 
@@ -132,29 +121,10 @@ class GameScreen extends Component {
         if (mode == 'question') {
             $('#video_div, #video').removeClass('q_video_large');
             $('#video_div, #video').addClass('q_video_large');
-            /*
-            $('.q_video').css({
-                "position": "absolute",
-                "left": "0",
-                "top": "0",
-                "width": "50px",
-                "height": "50px",
-                "border-radius": "50px",
-                "margin-left": "25px",
-                "z-index": "3",
-            }) */
         }
         else {
             $('#video_div, #video').removeClass('q_video_small');
             $('#video_div, #video').addClass('q_video_large');
-            /*
-            $('.q_video').css({
-                "position": "static",
-                "border-radius": "0px",
-                "margin-left": "0px",
-                "z-index": "-1",
-            })
-            */
         }
 
     }
@@ -166,7 +136,6 @@ class GameScreen extends Component {
 
         currTime += 100;
         var timeLeft = QUESTION_TIME - ((currTime - that.props.question.startTime) / 1000);
-        //console.log(timeLeft);
         if (timeLeft > 0) {
             that.setState({
                 time: (timeLeft / QUESTION_TIME) * 100
@@ -457,12 +426,7 @@ class GameScreen extends Component {
             <div>
                 <div className="game_screen_container">
                     <div id="holder">
-
                     </div>
-
-                    {/*
-                    <button onClick={() => this.test("add")}>add</button>
-                    <button style={{ zIndex: "3" }} onClick={() => this.test("remove")}>remove</button> */}
 
 
                     <div className="q_b_c" style={{ visibility: this.props.question.status == 'active' || this.props.question.status == 'results' ? 'visible' : 'hidden', display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'center' }}>
@@ -484,7 +448,7 @@ class GameScreen extends Component {
                                 />
 
                                 <div id="video_div" style={{ visibility: this.props.general.streamStatus == 'active' ? 'visible' : 'hidden' }} className={this.props.question.status == 'active' || this.props.question.status == 'results' ? "q_video_small" : "q_video_large"}>
-                                    <video id="video" muted autoPlay loop className={this.props.question.status == 'active' || this.props.question.status == 'results' ? "q_video_small" : "q_video_large"} ></video>
+                                    <video id="video" ref="video" playsInline muted autoPlay className={this.props.question.status == 'active' || this.props.question.status == 'results' ? "q_video_small" : "q_video_large"} ></video>
                                     <canvas id="canvas" height="50" width="50"></canvas>
                                 </div>
                             </div>
