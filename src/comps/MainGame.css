@@ -16,17 +16,24 @@ video{
 
 
 .main_game_container{
-    position: fixed;
+   
 
-
+    position: relative;
+    z-index: 4;
     width: 100%;
-    height: 100vh;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
     
     
 }
 
 
 .main_screen_g{
+
+    flex:20;
+    
     /*
     height: 100%;
     display: flex;
@@ -41,15 +48,14 @@ video{
 
 /* TOP BAR */
 .game_top_bar{
+    padding: 15px 0;
     width: 100%;
+    flex:1;
+    max-height: 30px;
 
-    display: fixed;
-    left:0;
-    top:0;
 }
 
 .g_t_b_wrapper{
-    margin: 15px 0;
     height: 100%;
     width: 100%;
     display: flex;
@@ -58,7 +64,6 @@ video{
 }
 
 .h_b_startButt{
-    margin-left: 15px;
 }
 
 .h_b_startButt button{
@@ -96,3 +101,15 @@ video{
 }
 
 
+.side_menu{
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.side_menu_item{
+    padding-top: 10px;
+    margin-left: 15px;
+}

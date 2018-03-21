@@ -8,7 +8,10 @@ import "react-sweet-progress/lib/style.css";
 import './GameScreen.css';
 
 //COMPS
-import { DatabaseHandler } from './DatabaseHandler';
+import { database, DatabaseHandler } from './DatabaseHandler';
+
+//IMG
+import userOnlineImg from '../images/user-online.png';
 
 //SOUND
 import qStartSound from '../audio/question.mp3';
@@ -19,6 +22,7 @@ window.createjs.Sound.registerSound(qStartSound, "qStartSound");
 window.createjs.Sound.registerSound(chooseOptionSound, "chooseOptionSound");
 window.createjs.Sound.registerSound(rightAnsSound, "rightAnsSound");
 window.createjs.Sound.registerSound(wrongAnsSound, "wrongAnsSound");
+
 
 
 var that;
@@ -35,6 +39,7 @@ var qNumAns = {};
 var video;
 var videoInter;
 var videoCanvas;
+var onlineInter;
 class GameScreen extends Component {
     constructor(props) {
         super(props);
@@ -42,7 +47,8 @@ class GameScreen extends Component {
         that = this;
 
         this.state = {
-            time: 0
+            time: 0,
+            gameStat: {},
         }
 
     }
@@ -53,6 +59,21 @@ class GameScreen extends Component {
             this.controlVideo();
         }, 500);
 
+
+        //online users
+        that.getOnlineUsers();
+        that.onlineInter = setInterval(() => that.getOnlineUsers(), 10000);
+    }
+
+    getOnlineUsers() {
+        DatabaseHandler.getDataOnce(["/GameStats/", this.props.game.startTime], (snap) => {
+            console.log("test");
+            if (!snap)
+                return;
+            that.setState({
+                gameStat: snap.val(),
+            })
+        })
     }
 
 
@@ -76,6 +97,11 @@ class GameScreen extends Component {
                     video.play();
                     setInterval(that.updateVideo(), 24);
                     that.videoInter = setInterval(() => that.advanceVideo(2), 5000);
+
+
+                    if (video.requestFullscreen) {
+                        video.requestFullscreen();
+                    }
                 });
 
             }
@@ -391,15 +417,49 @@ class GameScreen extends Component {
         }
     }
 
-    render() {
 
-        if (this.state.time == 0 && (this.props.question.status == 'active' || this.props.question.status == 'results')) {
+    componentDidUpdate(prevProps, prevState) {
+        /*
+        var nextQuestion = that.props.question;
+        var question = prevProps.question;
+
+        var nextGeneral = that.props.general;
+        var general = prevProps.general;
+
+        var nextQuestionData = that.props.questionData;
+        var questionData = prevProps.questionData;
+
+
+        if (question.status != nextQuestion.status && nextQuestion.status == 'active' && !questionStarted) {
+            console.log("question-starts-now")
+            questionStarted = true;
+            this.start();
+        }
+
+        if (question.status != nextQuestion.status && !showingResults && nextQuestion.status == 'results'
+            && nextQuestion && nextQuestionData && nextQuestionData.questionId == nextQuestion.questionId) {
+            showingResults = true;
+            console.log("question-data-starts-now")
+            this.showResults();
+        }
+
+        if ((nextGeneral.streamStatus == 'active' && !videoPlaying) || (nextGeneral.streamStatus == 'off' && videoPlaying)) {
+            this.controlVideo();
+        }
+        */
+    }
+
+    render() {
+        var isShowing = this.props.question.status == 'active' || this.props.question.status == 'results';
+
+        if (this.state.time == 0 && isShowing) {
             setTimeout(() => {
                 var obj = document.getElementsByClassName("react-sweet-progress-symbol")[0];
                 if (obj)
                     obj.innerHTML = that.state.time;
             }, 10)
         }
+
 
         if (lastQStat != this.props.question.status && this.props.question.status == 'active' && !questionStarted) {
             lastQStat = this.props.question.status;
@@ -422,75 +482,81 @@ class GameScreen extends Component {
 
 
 
+
         return (
-            <div>
-                <div className="game_screen_container">
-                    <div id="holder">
+            <div className="game_screen_container">
+
+                {this.state.gameStat.playingUsers != undefined ?
+                    <div className="online_container">
+                        <img src={userOnlineImg} />
+                        <h5>{this.state.gameStat.playingUsers + " מחוברים"}</h5>
+                    </div> : ''}
+
+                <div className="q_b_c" style={{ visibility: isShowing ? 'visible' : 'hidden', display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'center' }}>
+                    <div className="title_question_container">
+                        <h5 style={{ fontWeight: 500 }}>{"שאלה " + this.props.question.num}</h5>
                     </div>
+                    <div className="question_container">
+
+                        <div className="question_timer">
+                            <h3 className="p_status" style={{ textAlign: 'center', color: this.props.user.gameStatus == 'active' ? "rgb(171, 212, 143)" : "#f3bfbf" }} >{this.props.user.gameStatus == 'active' ? "פעיל" : "לא פעיל"}</h3>
 
 
-                    <div className="q_b_c" style={{ visibility: this.props.question.status == 'active' || this.props.question.status == 'results' ? 'visible' : 'hidden', display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'center' }}>
-                        <div className="title_question_container">
-                            <h5 style={{ fontWeight: 500 }}>{"שאלה " + this.props.question.num}</h5>
+                            <Progress
+                                status="active"
+                                style={{ height: "10" }}
+                                type="circle"
+                                strokeWidth={5}
+                                percent={this.state.time}
+                            />
+
+                            <div id="video_div" style={{ visibility: this.props.general.streamStatus == 'active' ? 'visible' : 'hidden' }} className={isShowing ? "q_video_small" : "q_video_large"}>
+                                <video id="video" ref="video" playsInline muted autoPlay className={isShowing ? "q_video_small" : "q_video_large"} ></video>
+                                <canvas id="canvas" height="50" width="50"></canvas>
+                            </div>
                         </div>
-                        <div className="question_container">
 
-                            <div className="question_timer">
-                                <h3 className="p_status" style={{ textAlign: 'center', color: this.props.user.gameStatus == 'active' ? "rgb(171, 212, 143)" : "#f3bfbf" }} >{this.props.user.gameStatus == 'active' ? "פעיל" : "לא פעיל"}</h3>
-
-
-                                <Progress
-                                    status="active"
-                                    style={{ height: "10" }}
-                                    type="circle"
-                                    strokeWidth={5}
-                                    percent={this.state.time}
-                                />
-
-                                <div id="video_div" style={{ visibility: this.props.general.streamStatus == 'active' ? 'visible' : 'hidden' }} className={this.props.question.status == 'active' || this.props.question.status == 'results' ? "q_video_small" : "q_video_large"}>
-                                    <video id="video" ref="video" playsInline muted autoPlay className={this.props.question.status == 'active' || this.props.question.status == 'results' ? "q_video_small" : "q_video_large"} ></video>
-                                    <canvas id="canvas" height="50" width="50"></canvas>
-                                </div>
+                        <div className="q_w_ans">
+                            <div className="question_text">
+                                {isShowing ?
+                                    <h3>{this.props.question.question}</h3> : ''}
                             </div>
 
-                            <div className="q_w_ans">
-                                <div className="question_text">
-                                    <h3>{this.props.question.question}</h3>
-                                </div>
-
-                                <div className="question_options">
-                                    <div id="option1" onClick={() => this.chooseOption(1)} className="q_option">
-                                        <div className="option_text">
+                            <div className="question_options">
+                                <div id="option1" onClick={() => this.chooseOption(1)} className="q_option">
+                                    <div className="option_text">
+                                        {isShowing ?
                                             <h5>{this.props.question.status == 'results' ?
                                                 this.props.question.option1 + " (" + this.props.questionData.option1Num + ")" :
-                                                this.props.question.option1}</h5>
-                                        </div>
-                                        <div id="result1" className="results" />
-
+                                                this.props.question.option1}</h5> : ''}
                                     </div>
-                                    <div id="option2" onClick={() => this.chooseOption(2)} className="q_option">
-                                        <div className="option_text">
+                                    <div id="result1" className="results" />
+
+                                </div>
+                                <div id="option2" onClick={() => this.chooseOption(2)} className="q_option">
+                                    <div className="option_text">
+                                        {isShowing ?
                                             <h5>{this.props.question.status == 'results' ?
                                                 this.props.question.option2 + " (" + this.props.questionData.option2Num + ")" :
-                                                this.props.question.option2}</h5>
-                                        </div>
-                                        <div id="result2" className="results" />
+                                                this.props.question.option2}</h5> : ''}
                                     </div>
-                                    <div id="option3" onClick={() => this.chooseOption(3)} className="q_option">
-                                        <div className="option_text">
+                                    <div id="result2" className="results" />
+                                </div>
+                                <div id="option3" onClick={() => this.chooseOption(3)} className="q_option">
+                                    <div className="option_text">
+                                        {isShowing ?
                                             <h5>{this.props.question.status == 'results' ?
                                                 this.props.question.option3 + " (" + this.props.questionData.option3Num + ")" :
-                                                this.props.question.option3}</h5>
-                                        </div>
-                                        <div id="result3" className="results" />
+                                                this.props.question.option3}</h5> : ''}
                                     </div>
+                                    <div id="result3" className="results" />
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
 
-                </div >
             </div >
         )
     }

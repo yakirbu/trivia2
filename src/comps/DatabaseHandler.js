@@ -111,6 +111,17 @@ class DatabaseHandler {
     }
 
 
+    static addUserOnline(gameId, callback) {
+        database.ref('/GameStats/' + gameId).transaction((snapData) => {
+            if (snapData) {
+                snapData.playingUsers++;
+            }
+            return snapData;
+        }).then(s => {
+            callback(s);
+        });
+    }
+
 
 
     static getTime(callback) {

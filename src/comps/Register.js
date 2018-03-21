@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { database, auth, DatabaseHandler } from './DatabaseHandler';
-import * as firebase from 'firebase';
+import $ from 'jquery';
+
 //CSS
 import './Register.css';
 
@@ -9,7 +10,7 @@ import MainGame from './MainGame';
 
 //IMG
 import game_logo from '../images/logo-icon.png'
-
+import bg_img from '../images/bg.jpg';
 
 var that;
 class Register extends Component {
@@ -62,6 +63,14 @@ class Register extends Component {
                 console.log("user logged out")
             }
         });
+
+
+        $('body').css({ 'background': 'url(' + bg_img + ') no-repeat center', 'background-size': 'cover' });
+
+
+
+
+
     }
 
 
@@ -71,7 +80,7 @@ class Register extends Component {
             that.setState({
                 name: userName,
             }, () => {
-                window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                window.recaptchaVerifier = new auth.RecaptchaVerifier('recaptcha-container', {
                     'size': 'normal',
                     'callback': function (response) {
                         that.setState({
@@ -195,7 +204,7 @@ class Register extends Component {
 
     render() {
         return (
-            <div>
+            <div style={{ height: '100%' }}>
                 {!this.state.verified ?
                     <div className="register_container">
                         <img className="game_logo" src={game_logo} />
