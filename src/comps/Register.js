@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { database, auth, DatabaseHandler } from './DatabaseHandler';
 import $ from 'jquery';
+import { Progress } from 'react-sweet-progress';
 
 //CSS
 import './Register.css';
@@ -12,6 +13,8 @@ import MainGame from './MainGame';
 import game_logo from '../images/logo-icon.png'
 import bg_img from '../images/bg.jpg';
 
+var loadingInter;
+
 var that;
 class Register extends Component {
 
@@ -21,6 +24,8 @@ class Register extends Component {
         that = this;
 
         this.state = {
+            gameLoad: 0,
+            loading: true,
             auth: false,
             name: "",
             verified: false,
@@ -28,11 +33,21 @@ class Register extends Component {
             recaptcha: false,
             user: null,
         }
+
+        that.loadingInter = setInterval(() => { that.updateGameLoad() }, 500);
+    }
+
+
+    updateGameLoad() {
+        that.setState({ gameLoad: that.state.gameLoad + 20 });
+        console.log(that.state.gameLoad);
     }
 
     componentDidMount() {
 
         auth.onAuthStateChanged(function (user) {
+
+
             if (user) {
                 var userPhone = "0" + user.phoneNumber.replace("+972", "");
 
@@ -42,6 +57,7 @@ class Register extends Component {
 
                         DatabaseHandler.listen("Users/" + childSnapshot.key, (us) => {
                             that.setState({
+                                loading: false,
                                 verified: true,
                                 user: us.val(),
                             })
@@ -60,8 +76,10 @@ class Register extends Component {
             } else {
                 // User is signed out.
                 // ...
+                that.setState({ loading: false });
                 console.log("user logged out")
             }
+
         });
 
 
@@ -71,6 +89,11 @@ class Register extends Component {
 
 
 
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (!that.state.loading)
+            clearInterval(that.loadingInter);
     }
 
 
@@ -205,51 +228,58 @@ class Register extends Component {
     render() {
         return (
             <div style={{ height: '100%' }}>
-                {!this.state.verified ?
-                    <div className="register_container">
-                        <img className="game_logo" src={game_logo} />
+                {this.state.loading ?
+                    <div style={{ height: '100%', color: 'white', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'absolute' }}>
+                        <Progress type="circle" percent={that.state.gameLoad} />
+                    </div> :
 
-                        <div className="text_w_input">
-                            {this.state.name == "" ?
-                                <div>
-                                    <h3>הזן כינוי</h3>
-                                    <input id="nameText" type="text" maxLength="11" placeholder="הזן כינוי" />
+                    <div style={{ height: '100%' }}>
+                        {!this.state.verified ?
+                            <div className="register_container">
+                                <img className="game_logo" src={game_logo} />
 
-                                    <div onClick={this.saveUserName} className="game_button">
-                                        הרשם
-                                    </div>
+                                <div className="text_w_input">
+                                    {this.state.name == "" ?
+                                        <div>
+                                            <h3>הזן כינוי</h3>
+                                            <input id="nameText" type="text" maxLength="11" placeholder="הזן כינוי" />
 
-                                </div> :
-
-                                (!this.state.smsSent ?
-                                    <div>
-                                        <h3>הזן את מס' הפלאפון שלך</h3>
-                                        <input id="phoneNum" type="text" maxLength="11" placeholder="הזן מספר פלאפון" />
-
-                                        <div onClick={this.isRegistered} className="game_button">
-                                            הרשם
+                                            <div onClick={this.saveUserName} className="game_button">
+                                                הרשם
                                         </div>
 
-                                        <div id="recaptcha-container" />
+                                        </div> :
 
-                                    </div> :
-                                    <div>
-                                        <h3>הזן את הקוד שנשלח אליך</h3>
-                                        <input id="codeNum" type="text" maxLength="11" placeholder="הזן את הקוד שקיבלת" />
+                                        (!this.state.smsSent ?
+                                            <div>
+                                                <h3>הזן את מס' הפלאפון שלך</h3>
+                                                <input id="phoneNum" type="text" maxLength="11" placeholder="הזן מספר פלאפון" />
 
-                                        <div onClick={this.verifySMSCode} className="game_button">
-                                            אמת
-                                        </div>
-                                    </div>)
-                            }
+                                                <div onClick={this.isRegistered} className="game_button">
+                                                    הרשם
+                                            </div>
+
+                                                <div id="recaptcha-container" />
+
+                                            </div> :
+                                            <div>
+                                                <h3>הזן את הקוד שנשלח אליך</h3>
+                                                <input id="codeNum" type="text" maxLength="11" placeholder="הזן את הקוד שקיבלת" />
+
+                                                <div onClick={this.verifySMSCode} className="game_button">
+                                                    אמת
+                                            </div>
+                                            </div>)
+                                    }
 
 
 
-                        </div>
+                                </div>
 
 
-                    </div>
-                    : <MainGame user={this.state.user} />}
+                            </div>
+                            : <MainGame user={this.state.user} />}
+                    </div>}
             </div>
         )
     }

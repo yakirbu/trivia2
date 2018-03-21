@@ -113,3 +113,7 @@ video{
     padding-top: 10px;
     margin-left: 15px;
 }
+
+.react-sweet-progress-symbol{
+  color:#aeaeae !important;
+}

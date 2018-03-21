@@ -171,13 +171,7 @@ class MainGame extends Component {
 
 
                 <div className="side_menu">
-                    <div className="side_menu_item">
-                        <div className="h_b_startButt">
-                            <a href={window.location.href.match(/^.*\//)}>
-                                <img width="25" height="20" src={logoIcon} />
-                            </a>
-                        </div>
-                    </div>
+
 
                     <div className="side_menu_item">
                         {this.state.general.streamStatus == 'active' ?
