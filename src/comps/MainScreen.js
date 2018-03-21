@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import MainGame from './MainGame';
+import $ from 'jquery';
 import { database } from './DatabaseHandler';
 
 import './MainScreen.css';
@@ -16,6 +17,16 @@ class MainScreen extends Component {
 
         that = this;
 
+    }
+
+    componentDidMount() {
+        /*
+        setTimeout(() => {
+            var height = window.screen.height - 29;
+            $('.m_s_m').css({ "height": height + "px" });
+            console.log(height);
+        }, 50);
+        */
     }
 
     /*
@@ -78,23 +89,22 @@ class MainScreen extends Component {
                         </div>
                     </div>
 
-                </div>
 
-
-
-
-                {/* BOTTOM-BAR */}
-                <div className="main_game_bottom">
-                    <div className="bottom_buttons">
-                        <div className="game_button">
-                            שיאים
+                    {/* BOTTOM-BAR */}
+                    <div className="main_game_bottom">
+                        <div className="bottom_buttons">
+                            <div className="game_button">
+                                הגדרות
                         </div>
 
-                        <div className="game_button">
-                            שיאים
+                            <div className="game_button">
+                                המובילים
+                        </div>
                         </div>
                     </div>
+
                 </div>
+
 
 
             </div>
