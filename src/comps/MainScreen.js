@@ -49,7 +49,7 @@ class MainScreen extends Component {
                             <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
                                 {console.log(this.props.game.status)}
                                 <h3 style={{ fontSize: '20px', margin: "10px" }}>המשחק התחיל!</h3>
-                                <div onClick={() => this.props.startGame()} className="game_button" style={{ fontSize: "15px" }}>
+                                <div onClick={() => this.props.startGame(true)} className="game_button" style={{ fontSize: "15px" }}>
                                     הכנס למשחק
                                 </div>
                             </div>

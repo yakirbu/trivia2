@@ -113,3 +113,13 @@ video{
     padding-top: 10px;
     margin-left: 15px;
 }
+
+
+
+.video_background{
+    z-index: -1;
+}
+
+.video_background video{
+    object-fit: cover;
+}

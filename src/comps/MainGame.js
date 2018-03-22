@@ -13,6 +13,10 @@ import unmuteIcon from '../images/unmute.png';
 import fullscreenIcon from '../images/fullscreen.png';
 import settingsIcon from '../images/settings.png';
 import logoIcon from '../images/logo-icon.png'
+import backIcon from '../images/back.png'
+
+//VIDEOS
+import bgVideo from '../videos/bgvideo3.mp4';
 
 
 //COMPS
@@ -40,12 +44,22 @@ class MainGame extends Component {
 
     }
 
-    startGame() {
-        DatabaseHandler.updateUserGameStatus(this.props.user.createdAt, "active", (s) => {
-            that.setState({
-                startGame: true,
+    startGame(start) {
+        console.log(start);
+        if (start) {
+            DatabaseHandler.updateUserGameStatus(this.props.user.createdAt, "active", (s) => {
+                that.setState({
+                    startGame: true,
+                })
             })
-        })
+        }
+        else {
+            DatabaseHandler.updateUserGameStatus(this.props.user.createdAt, "watching", (s) => {
+                that.setState({
+                    startGame: false,
+                })
+            })
+        }
 
     }
 
@@ -86,6 +100,7 @@ class MainGame extends Component {
 
 
         $('html').css({ "height": window.screen.height + "px" });
+        $('html').css({ "height": "100%" });
 
     }
 
@@ -103,6 +118,8 @@ class MainGame extends Component {
 
 
     toggleFullScreen() {
+
+
         var doc = window.document;
         var docEl = doc.documentElement;
 
@@ -117,9 +134,33 @@ class MainGame extends Component {
         }
         fullscreen = !fullscreen;
 
+
+
+
         var height = window.screen.height;
         console.log("height: " + height);
         $('html').css({ "height": height + "px" })
+    }
+
+
+    getMobileOperatingSystem() {
+        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+        // Windows Phone must come first because its UA also contains "Android"
+        if (/windows phone/i.test(userAgent)) {
+            return "Windows Phone";
+        }
+
+        if (/android/i.test(userAgent)) {
+            return "Android";
+        }
+
+        // iOS detection from: http://stackoverflow.com/a/9039885/177710
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+            return "iOS";
+        }
+
+        return "unknown";
     }
 
 
@@ -154,6 +195,12 @@ class MainGame extends Component {
         return (
             <div className="main_game_container">
 
+                <div className="video_background" style={{ textAlign: 'center' }}>
+                    <video ref="video" playsInline muted autoPlay loop>
+                        <source src={bgVideo} type="video/mp4" />
+                    </video>
+                </div>
+
                 {/* TOP-BAR */}
                 <div className="game_top_bar">
                     <div className="g_t_b_wrapper">
@@ -171,30 +218,34 @@ class MainGame extends Component {
 
 
                 <div className="side_menu">
-                    <div className="side_menu_item">
-                        <div className="h_b_startButt">
-                            <a href={window.location.href.match(/^.*\//)}>
-                                <img width="25" height="20" src={logoIcon} />
-                            </a>
-                        </div>
-                    </div>
 
-                    <div className="side_menu_item">
-                        {this.state.general.streamStatus == 'active' ?
+                    {this.state.startGame ?
+                        <div className="side_menu_item">
+                            {this.state.general.streamStatus == 'active' ?
+                                <div className="h_b_startButt">
+                                    <a onClick={this.playVid}>
+                                        <img width="25" height="25" src={this.state.mute ? unmuteIcon : muteIcon} />
+                                    </a>
+                                </div> : ''}
+                        </div> : ''}
+
+                    {this.getMobileOperatingSystem() != "iOS" ?
+                        <div className="side_menu_item">
                             <div className="h_b_startButt">
-                                <a onClick={this.playVid}>
-                                    <img width="25" height="25" src={this.state.mute ? unmuteIcon : muteIcon} />
+                                <a onClick={this.toggleFullScreen}>
+                                    <img width="23" height="23" src={fullscreenIcon} />
                                 </a>
-                            </div> : ''}
-                    </div>
+                            </div>
+                        </div> : ''}
 
-                    <div className="side_menu_item">
-                        <div className="h_b_startButt">
-                            <a onClick={this.toggleFullScreen}>
-                                <img width="23" height="23" src={fullscreenIcon} />
-                            </a>
-                        </div>
-                    </div>
+                    {this.state.startGame ?
+                        <div className="side_menu_item">
+                            <div className="h_b_startButt">
+                                <a onClick={() => this.startGame(false)}>
+                                    <img width="25" height="25" src={backIcon} />
+                                </a>
+                            </div>
+                        </div> : ''}
 
                     {/* SETTINGS SIDE MENU ? 
                     <div className="side_menu_item">
@@ -235,7 +286,7 @@ function MainScreen2() {
             game={that.state.currentGame}
             general={that.state.general}
             user={that.props.user}
-            startGame={() => that.startGame()}
+            startGame={(start) => that.startGame(start)}
         />
     )
 }
