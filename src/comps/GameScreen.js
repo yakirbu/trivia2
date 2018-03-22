@@ -63,6 +63,10 @@ class GameScreen extends Component {
         //online users
         that.getOnlineUsers();
         that.onlineInter = setInterval(() => that.getOnlineUsers(), 10000);
+
+        that.lockOptions()
+
+        $('.react-sweet-progress-symbol').css({ "color": "gray" })
     }
 
     getOnlineUsers() {
@@ -86,6 +90,8 @@ class GameScreen extends Component {
                 return;
             enableInlineVideo(video);
 
+            videoPlaying = true;
+
             //start streaming
             if (Hls.isSupported()) {
                 var hls = new Hls();
@@ -93,7 +99,6 @@ class GameScreen extends Component {
                 hls.loadSource(this.props.general.streamAddress);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    videoPlaying = true;
                     video.play();
                     setInterval(that.updateVideo(), 24);
                     that.videoInter = setInterval(() => that.advanceVideo(2), 5000);
@@ -216,7 +221,7 @@ class GameScreen extends Component {
                 "border": "1.5px #eaeaea solid",
                 "cursor": "pointer"
             });
-            $('.results').css({ "clip-path": "inset(0px 100% 0px 0px)" })
+            $('.results').css({ "clip-path": "inset(0px 100% 0px 0px)", "-webkit-clip-path": "inset(0px 100% 0px 0px)" })
         }
     }
 
@@ -303,21 +308,23 @@ class GameScreen extends Component {
             var t0 = performance.now();
             DatabaseHandler.getTime((time) => {
                 var t1 = performance.now();
-                console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
-                this.resetOptions();
                 currTime = time - (t1 - t0);
-                that.timer = setInterval(() => that.calculateTime(), 100);
+                console.log((currTime - that.props.question.startTime) + " " + (QUESTION_TIME * 1000))
+                if ((currTime - that.props.question.startTime) < (QUESTION_TIME * 1000)) {
+                    //there's timeleft for q
+                    questionStarted = true;
+                    this.resetOptions();
+                    that.timer = setInterval(() => that.calculateTime(), 100);
 
-                var timeLeft = ((currTime - that.props.question.startTime) / 1000);
-                console.log(timeLeft + " " + (timeLeft * 100));
-                if (timeLeft < QUESTION_TIME) {
+                    var timeLeft = ((currTime - that.props.question.startTime) / 1000);
+                    console.log(timeLeft + " " + (timeLeft * 100));
+                    if (timeLeft < QUESTION_TIME) {
 
-                    setTimeout(function () {
-                        window.createjs.Sound.play("qStartSound", { startTime: (timeLeft * 100), duration: 11000 });
-                    }, 50);
-
+                        setTimeout(function () {
+                            window.createjs.Sound.play("qStartSound", { startTime: (timeLeft * 100), duration: 11000 });
+                        }, 50);
+                    }
                 }
-
             })
 
         }
@@ -347,6 +354,12 @@ class GameScreen extends Component {
             $('#result' + rightAns).css({
                 "background-color": "#d4f3bf",
             });
+        }
+    }
+
+    resetResults() {
+        for (var i = 1; i < 4; i++) {
+            $('#result' + i).css({ "clip-path": "inset(0px  100% 0px 0px)", "-webkit-clip-path": "inset(0px  100% 0px 0px)" });
         }
     }
 
@@ -400,7 +413,7 @@ class GameScreen extends Component {
         if (type == "clip-path") {
             if (curr + 1 > goal) {
                 setTimeout(() => {
-                    $(id).css({ "clip-path": "inset(0px " + curr + "% 0px 0px)" });
+                    $(id).css({ "clip-path": "inset(0px " + curr + "% 0px 0px)", "-webkit-clip-path": "inset(0px " + curr + "% 0px 0px)" });
                     this.animate(id, type, curr - 1, goal)
                 }, 5)
             }
@@ -418,31 +431,39 @@ class GameScreen extends Component {
     }
 
 
+    componentWillReceiveProps(nextProp) {
+        //reset results
+        if (that.props.question && nextProp.question && that.props.question.status != nextProp.question.status
+            && nextProp.question.status == 'active') {
+            this.resetResults();
+        }
+    }
+
     componentDidUpdate(prevProps, prevState) {
         /*
         var nextQuestion = that.props.question;
         var question = prevProps.question;
-
+ 
         var nextGeneral = that.props.general;
         var general = prevProps.general;
-
+ 
         var nextQuestionData = that.props.questionData;
         var questionData = prevProps.questionData;
-
-
+ 
+ 
         if (question.status != nextQuestion.status && nextQuestion.status == 'active' && !questionStarted) {
             console.log("question-starts-now")
             questionStarted = true;
             this.start();
         }
-
+ 
         if (question.status != nextQuestion.status && !showingResults && nextQuestion.status == 'results'
             && nextQuestion && nextQuestionData && nextQuestionData.questionId == nextQuestion.questionId) {
             showingResults = true;
             console.log("question-data-starts-now")
             this.showResults();
         }
-
+ 
         if ((nextGeneral.streamStatus == 'active' && !videoPlaying) || (nextGeneral.streamStatus == 'off' && videoPlaying)) {
             this.controlVideo();
         }
@@ -450,6 +471,8 @@ class GameScreen extends Component {
     }
 
     render() {
+        console.log("rendering");
+
         var isShowing = this.props.question.status == 'active' || this.props.question.status == 'results';
 
         if (this.state.time == 0 && isShowing) {
@@ -464,7 +487,6 @@ class GameScreen extends Component {
         if (lastQStat != this.props.question.status && this.props.question.status == 'active' && !questionStarted) {
             lastQStat = this.props.question.status;
             console.log("question-starts-now")
-            questionStarted = true;
             this.start();
         }
 
