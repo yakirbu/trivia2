@@ -101,7 +101,7 @@ class GameScreen extends Component {
                 hls.on(Hls.Events.MANIFEST_PARSED, function () {
                     video.play();
                     setInterval(that.updateVideo(), 24);
-                    that.videoInter = setInterval(() => that.advanceVideo(2), 5000);
+                    that.videoInter = setInterval(() => that.advanceVideo(1), 2000);
 
 
                     if (video.requestFullscreen) {
@@ -138,6 +138,8 @@ class GameScreen extends Component {
 
     advanceVideo(times) {
         var video = document.getElementById('video');
+        if (!video)
+            return;
         var currTime = video.currentTime;
         var dur = video.duration;
         if (dur - currTime > 3)
