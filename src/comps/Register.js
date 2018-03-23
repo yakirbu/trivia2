@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { database, auth, DatabaseHandler } from './DatabaseHandler';
+import * as firebase from 'firebase';
 import $ from 'jquery';
 import { Progress } from 'react-sweet-progress';
 
@@ -103,7 +104,7 @@ class Register extends Component {
             that.setState({
                 name: userName,
             }, () => {
-                window.recaptchaVerifier = new auth.RecaptchaVerifier('recaptcha-container', {
+                window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
                     'size': 'normal',
                     'callback': function (response) {
                         that.setState({
