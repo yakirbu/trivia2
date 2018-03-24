@@ -13,6 +13,10 @@ import { database, DatabaseHandler } from './DatabaseHandler';
 //IMG
 import userOnlineImg from '../images/user-online.png';
 
+//VIDEO
+import intro from '../videos/intro.mp4';
+import bgVideo from '../videos/bgvideo3.mp4';
+
 //SOUND
 import qStartSound from '../audio/question.mp3';
 import chooseOptionSound from '../audio/selection.mp3';
@@ -22,7 +26,6 @@ window.createjs.Sound.registerSound(qStartSound, "qStartSound");
 window.createjs.Sound.registerSound(chooseOptionSound, "chooseOptionSound");
 window.createjs.Sound.registerSound(rightAnsSound, "rightAnsSound");
 window.createjs.Sound.registerSound(wrongAnsSound, "wrongAnsSound");
-
 
 
 var that;
@@ -438,6 +441,50 @@ class GameScreen extends Component {
         if (that.props.question && nextProp.question && that.props.question.status != nextProp.question.status
             && nextProp.question.status == 'active') {
             this.resetResults();
+        }
+
+        if (that.props.general && nextProp.general && that.props.general.videoPlaying != nextProp.general.videoPlaying &&
+            nextProp.general.videoPlaying == 'Intro') {
+            that.changeVideoSrc(false, intro);
+        }
+    }
+
+
+    changeVideoSrc(toDefault, src) {
+        var vidId = "vid_bg";
+        var srcId = "vid_bg_src";
+        var video = document.getElementById(vidId);
+        if (!video)
+            return;
+
+        //$('#' + vidId).prop('muted', false)
+
+        if (toDefault) {
+            $('#video').css({ visibility: "visible" });
+            $('#video').get(0).muted = false;
+
+            var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if (!iOS) {
+                $('#' + vidId).prop('loop', true)
+                $('#' + vidId).get(0).pause();
+                $('#' + srcId).attr('src', bgVideo);
+                $('#' + vidId).get(0).load();
+                $('#' + vidId).get(0).play();
+            }
+        }
+        else {
+            $('#video').css({ visibility: "hidden" });
+            $('#video').get(0).muted = true;
+
+            $('#' + vidId).prop('loop', false)
+            $('#' + vidId).get(0).pause();
+            $('#' + srcId).attr('src', intro);
+            $('#' + vidId).get(0).load();
+            $('#' + vidId).get(0).play();
+            video.onended = function () {
+                console.log("vid ended");
+                that.changeVideoSrc(true, src);
+            };
         }
     }
 

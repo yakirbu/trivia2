@@ -105,11 +105,18 @@ class MainGame extends Component {
     }
 
     playVid() {
+        var bgvid = document.getElementById('vid_bg');
+        if (bgvid != undefined) {
+            console.log("bgvid is k")
+            bgvid.muted = !bgvid.muted;
+        }
+
         video = document.getElementById('video');
         if (!video)
             return;
         video.muted = !video.muted;
-        video.currentTime = video.currentTime + 20;
+
+        //video.currentTime = video.currentTime + 20;
 
         that.setState({
             mute: !that.state.mute
@@ -196,8 +203,8 @@ class MainGame extends Component {
             <div className="main_game_container">
 
                 <div className="video_background" style={{ textAlign: 'center' }}>
-                    <video ref="video" playsInline muted autoPlay loop>
-                        <source src={bgVideo} type="video/mp4" />
+                    <video style={{ width: "100%", height: '100%' }} id="vid_bg" playsInline muted autoPlay loop>
+                        <source id="vid_bg_src" src={bgVideo} type="video/mp4" />
                     </video>
                 </div>
 
