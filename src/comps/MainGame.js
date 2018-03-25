@@ -105,10 +105,12 @@ class MainGame extends Component {
     }
 
     playVid() {
-        var bgvid = document.getElementById('vid_bg');
-        if (bgvid != undefined) {
-            console.log("bgvid is k")
-            bgvid.muted = !bgvid.muted;
+        if (that.getMobileOperatingSystem() != 'iOS') {
+            var bgvid = document.getElementById('vid_bg');
+            if (bgvid != undefined) {
+                console.log("bgvid is k")
+                bgvid.muted = !bgvid.muted;
+            }
         }
 
         video = document.getElementById('video');

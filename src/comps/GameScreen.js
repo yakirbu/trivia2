@@ -43,6 +43,10 @@ var video;
 var videoInter;
 var videoCanvas;
 var onlineInter;
+var videoDur = 0; // CALCULATE VIDEO DUR, AND RELOAD IF THERE'S A DIFFERENCE!
+var dur1 = 0;
+var dur2 = 0;
+var addon = 0;
 class GameScreen extends Component {
     constructor(props) {
         super(props);
@@ -62,6 +66,7 @@ class GameScreen extends Component {
             this.controlVideo();
         }, 500);
 
+        videoPlaying = false;
 
         //online users
         that.getOnlineUsers();
@@ -85,6 +90,7 @@ class GameScreen extends Component {
 
 
     controlVideo() {
+
         console.log("opening: " + that.props.general.streamStatus + " " + videoPlaying)
         if (that.props.general.streamStatus == 'active' && !videoPlaying) {
             video = this.refs.video;
@@ -95,6 +101,8 @@ class GameScreen extends Component {
 
             videoPlaying = true;
 
+            addon = 0;
+
             //start streaming
             if (Hls.isSupported()) {
                 var hls = new Hls();
@@ -103,9 +111,9 @@ class GameScreen extends Component {
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function () {
                     video.play();
-                    setInterval(that.updateVideo(), 24);
-                    that.videoInter = setInterval(() => that.advanceVideo(1), 2000);
-
+                    //setInterval(that.updateVideo(), 24);
+                    dur1 = performance.now() - (video.currentTime * 1000) - 20000;
+                    that.videoInter = setInterval(() => that.advanceVideo(1, false), 2000);
 
                     if (video.requestFullscreen) {
                         video.requestFullscreen();
@@ -118,7 +126,14 @@ class GameScreen extends Component {
                 video.addEventListener('canplay', function () {
                     videoPlaying = true;
                     video.play();
+                    dur1 = performance.now() - (video.currentTime * 1000); //currTime = video.currentTime;
+                    that.videoInter = setInterval(() => that.advanceVideo(1, true), 2000);
+
+                    //that.advanceVideo(1, true);
+
                 });
+
+
             }
         }
         else if (that.props.general.streamStatus == 'off' && videoPlaying) {
@@ -139,14 +154,42 @@ class GameScreen extends Component {
         ctx.drawImage(myVideo, 0, 0, 640, 480);
     }
 
-    advanceVideo(times) {
+    advanceVideo(times, ios) {
         var video = document.getElementById('video');
         if (!video)
             return;
         var currTime = video.currentTime;
         var dur = video.duration;
-        if (dur - currTime > 3)
-            video.currentTime += (dur - currTime) / 2;
+
+        dur2 = ((performance.now() - dur1) / 1000); //currTime += 2;
+        //$("#debug").html(video.currentTime + " (and: " + (dur2) + ")");
+        //$('#debug1').html('now: ' + video.paused + " vid.curr: " + video.ended);
+        if (video.paused || video.ended) {
+            videoPlaying = false;
+            that.controlVideo();
+            return;
+        }
+
+        //video.currentTime += 1;
+        //video.load();
+
+        /*
+        if (dur - currTime > 3) {
+            if (!ios)
+                video.currentTime += (dur - currTime) / 2;
+            else {
+                //that.controlVideo();
+                //video.currentTime += 1;
+            }
+        }
+        */
+
+        if (dur2 - video.currentTime > 3) {
+            var t = video.currentTime;
+            video.currentTime += (dur2 - t);
+        }
+
+
         console.log(currTime + " " + dur)
 
     }
@@ -443,10 +486,13 @@ class GameScreen extends Component {
             this.resetResults();
         }
 
+        /*
+
         if (that.props.general && nextProp.general && that.props.general.videoPlaying != nextProp.general.videoPlaying &&
             nextProp.general.videoPlaying == 'Intro') {
             that.changeVideoSrc(false, intro);
         }
+        */
     }
 
 
@@ -556,6 +602,12 @@ class GameScreen extends Component {
 
         return (
             <div className="game_screen_container">
+
+                {/*
+                <div id="debug1">
+                </div>
+                <div id="debug">
+                </div> */}
 
                 {this.state.gameStat.playingUsers != undefined ?
                     <div className="online_container">
