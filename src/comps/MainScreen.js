@@ -6,7 +6,7 @@ import { database } from './DatabaseHandler';
 import './MainScreen.css';
 
 //IMG
-import game_logo from '../images/logo-icon.png'
+import game_logo from '../images/logo-icon2.png'
 
 var that;
 class MainScreen extends Component {
@@ -40,6 +40,7 @@ class MainScreen extends Component {
     render() {
         return (
             <div className="m_s_m">
+
                 <div className="main_screen_container">
                     <img className="game_logo" src={game_logo} />
 

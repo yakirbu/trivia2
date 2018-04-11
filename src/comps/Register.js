@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { database, auth, DatabaseHandler } from './DatabaseHandler';
+import { databases, auth, DatabaseHandler } from './DatabaseHandler';
 import * as firebase from 'firebase';
 import $ from 'jquery';
 import { Progress } from 'react-sweet-progress';
@@ -11,8 +11,8 @@ import './Register.css';
 import MainGame from './MainGame';
 
 //IMG
-import game_logo from '../images/logo-icon.png'
-import bg_img from '../images/bg.jpg';
+import game_logo from '../images/logo-icon3.png'
+import bg_img from '../images/bg2.jpg';
 
 var loadingInter;
 
@@ -45,16 +45,54 @@ class Register extends Component {
     }
 
     componentDidMount() {
+        this.startFunctions();
+    }
+
+
+    startFunctions() {
+
+        DatabaseHandler.getAvailableDatabase((selected) => {
+            console.log("selected-database: " + selected);
+
+
+            var connectedRef = databases[DatabaseHandler.selected].ref('.info/connected');
+            setTimeout(() => {
+                connectedRef.once('value', function (snap) {
+                    if (snap.val() === true) {
+                        console.log("ONLINE");
+
+                        DatabaseHandler.addUserOnlineWrapper(() => {
+                            that.listenToAuth();
+                        });
+                    }
+                    else {
+                        console.log("NOT ONLINE");
+                        setTimeout(() => {
+                            that.startFunctions();
+                        }, 5000);
+                    }
+                });
+            }, 2000);
+
+        });
+
+        $('body').css({ 'background': 'url(' + bg_img + ') no-repeat center', 'background-size': 'cover' });
+
+    }
+
+
+    listenToAuth() {
 
         auth.onAuthStateChanged(function (user) {
-
-
             if (user) {
                 var userPhone = "0" + user.phoneNumber.replace("+972", "");
+
 
                 DatabaseHandler.getDataOnceWhere(["Users"], ["phone", userPhone], (childSnapshot) => {
                     if (childSnapshot) {
                         //already verified
+
+                        console.log("verified");
 
                         DatabaseHandler.listen("Users/" + childSnapshot.key, (us) => {
                             that.setState({
@@ -67,9 +105,12 @@ class Register extends Component {
 
                     }
                     else {
+                        console.log("unverified");
                         if (that.state.name != "")
                             that.createNewUser(userPhone);
                     }
+
+                    console.log("wtf");
                 });
 
 
@@ -82,14 +123,6 @@ class Register extends Component {
             }
 
         });
-
-
-        $('body').css({ 'background': 'url(' + bg_img + ') no-repeat center', 'background-size': 'cover' });
-
-
-
-
-
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -209,7 +242,7 @@ class Register extends Component {
 
             var updates = {};
             updates['/Users/' + time] = user;
-            return database.ref().update(updates).then((s) => {
+            return databases[DatabaseHandler.selected].ref().update(updates).then((s) => {
 
                 DatabaseHandler.listen("Users/" + user.createdAt, (us) => {
                     that.setState({

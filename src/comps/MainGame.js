@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Hls from 'hls.js';
-import { database, DatabaseHandler } from './DatabaseHandler';
+import { databases, DatabaseHandler } from './DatabaseHandler';
 import $ from 'jquery';
 
 //CSS
@@ -77,6 +77,28 @@ class MainGame extends Component {
                 });
                 console.log("currentQuestion in game is now: " + game.val().currentQuestionId);
 
+
+                /*
+                console.log("whttt");
+                var id = this.props.user.createdAt;
+                var gameId = DatabaseHandler.selected + "-" + game.val().startTime;
+          
+                var diconnectRef = databases[DatabaseHandler.selected].ref('Disconnect');
+                DatabaseHandler.getTime((time) => {
+                    var obj = {};
+                    obj[time + "-" + id] = gameId;
+                    diconnectRef.onDisconnect().set(obj).then(s => {
+                        DatabaseHandler.addUserOnline(gameId, (s) => {
+                            console.log("gid" + gameId);
+                            //disconnect from master
+                            DatabaseHandler.checkDBState(0, false);
+                        });
+                    });
+                });
+                */
+
+
+
                 //listen to current question changes
                 DatabaseHandler.listen('/Questions/' + game.key + "/" + game.val().currentQuestionId, (question) => {
                     console.log("question-" + question.key)
@@ -101,6 +123,10 @@ class MainGame extends Component {
 
         $('html').css({ "height": window.screen.height + "px" });
         $('html').css({ "height": "100%" });
+
+
+
+
 
     }
 
@@ -179,24 +205,32 @@ class MainGame extends Component {
         if (!firstTimeCall && this.state.currentGame.startTime != undefined) {
             firstTimeCall = true;
 
+            /*
             var id = this.props.user.createdAt;
             var gameId = this.state.currentGame.startTime;
 
-            DatabaseHandler.addUserOnline(gameId, (s) => {
-                console.log("gid" + gameId);
-                var diconnectRef = database.ref('Disconnect');
-                var connectedRef = database.ref('.info/connected');
-                connectedRef.on('value', function (snap) {
-                    if (snap.val() === true) {
 
-                        var obj = {};
-                        obj[id] = gameId;
-                        diconnectRef.onDisconnect().set(obj);
+            console.log("test");
 
-                        console.log("test");
-                    }
-                });
+            var connectedRef = databases[DatabaseHandler.selected].ref('.info/connected');
+            connectedRef.on('value', function (snap) {
+                if (snap.val() === true) {
+
+                    DatabaseHandler.addUserOnline(gameId, (s) => {
+                        console.log("gid" + gameId);
+                    });
+
+                }
+                else {
+                    var obj = {};
+                    //obj[id] = gameId;
+                    obj["test"] = "1";
+                    var diconnectRef = databases[DatabaseHandler.selected].ref('Disconnect');
+                    diconnectRef.onDisconnect().set(obj);
+                }
             });
+            */
+
 
 
         }
@@ -204,10 +238,12 @@ class MainGame extends Component {
         return (
             <div className="main_game_container">
 
+
                 <div className="video_background" style={{ textAlign: 'center' }}>
+                    {/*    
                     <video style={{ width: "100%", height: '100%' }} id="vid_bg" playsInline muted autoPlay loop>
                         <source id="vid_bg_src" src={bgVideo} type="video/mp4" />
-                    </video>
+                    </video> */}
                 </div>
 
                 {/* TOP-BAR */}

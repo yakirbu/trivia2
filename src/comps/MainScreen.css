@@ -62,7 +62,7 @@
 
 .player_data_item{
     margin: 5px 0;
-    color:#aeaeae;
+    color:#899eb2;
     flex:1;
 
     text-align: center;
@@ -71,7 +71,14 @@
     align-items: center;
     width: 95%;
     border-radius: 30px;
-    background: #eaeaea;
+    background: #e5f0ff;
+}
+
+.player_data_item:first-child{
+    margin-bottom: 0;
+}
+.player_data_item:last-child{
+    margin-top: 0;
 }
 
 

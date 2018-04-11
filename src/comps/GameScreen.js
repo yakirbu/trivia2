@@ -75,6 +75,9 @@ class GameScreen extends Component {
         that.lockOptions()
 
         $('.react-sweet-progress-symbol').css({ "color": "gray" })
+
+
+        //window.init_page();
     }
 
     getOnlineUsers() {
@@ -162,8 +165,8 @@ class GameScreen extends Component {
         var dur = video.duration;
 
         dur2 = ((performance.now() - dur1) / 1000); //currTime += 2;
-        //$("#debug").html(video.currentTime + " (and: " + (dur2) + ")");
-        //$('#debug1').html('now: ' + video.paused + " vid.curr: " + video.ended);
+        $("#debug").html(video.currentTime + " (and: " + (dur2) + ")");
+        $('#debug1').html('now: ' + video.paused + " vid.curr: " + video.ended);
         if (video.paused || video.ended) {
             videoPlaying = false;
             that.controlVideo();
@@ -184,10 +187,13 @@ class GameScreen extends Component {
         }
         */
 
+
+        /*
         if (dur2 - video.currentTime > 3) {
             var t = video.currentTime;
             video.currentTime += (dur2 - t);
         }
+        */
 
 
         console.log(currTime + " " + dur)
@@ -486,13 +492,10 @@ class GameScreen extends Component {
             this.resetResults();
         }
 
-        /*
-
         if (that.props.general && nextProp.general && that.props.general.videoPlaying != nextProp.general.videoPlaying &&
             nextProp.general.videoPlaying == 'Intro') {
             that.changeVideoSrc(false, intro);
         }
-        */
     }
 
 
@@ -609,6 +612,7 @@ class GameScreen extends Component {
                 <div id="debug">
                 </div> */}
 
+
                 {this.state.gameStat.playingUsers != undefined ?
                     <div className="online_container">
                         <img src={userOnlineImg} />
@@ -622,7 +626,7 @@ class GameScreen extends Component {
                     <div className="question_container">
 
                         <div className="question_timer">
-                            <h3 className="p_status" style={{ textAlign: 'center', color: this.props.user.gameStatus == 'active' ? "rgb(171, 212, 143)" : "#f3bfbf" }} >{this.props.user.gameStatus == 'active' ? "פעיל" : "לא פעיל"}</h3>
+                            <h3 className="p_status" style={{ textAlign: 'center', color: this.props.user.gameStatus == 'active' ? "rgb(171, 212, 143)" : "#f3bfbf" }} >{this.props.user.gameStatus == 'active' ? "משתתף" : "הודחת"}</h3>
 
 
                             <Progress
@@ -634,6 +638,7 @@ class GameScreen extends Component {
                             />
 
                             <div id="video_div" style={{ visibility: this.props.general.streamStatus == 'active' ? 'visible' : 'hidden' }} className={isShowing ? "q_video_small" : "q_video_large"}>
+                                <div class="display" id="remoteVideo"></div>
                                 <video id="video" ref="video" playsInline muted autoPlay className={isShowing ? "q_video_small" : "q_video_large"} ></video>
                                 <canvas id="canvas" height="50" width="50"></canvas>
                             </div>
